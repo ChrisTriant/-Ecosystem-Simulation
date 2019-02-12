@@ -6,6 +6,6 @@ private:
 	//Animal List
 	//Plant plant;
 public:
-	Tile();
+	Tile(char c);
 	char get_land();
 };

@@ -1,8 +1,8 @@
 #include"Tile.h"
 
-Tile::Tile()
+Tile::Tile(char c)
 {
-	landscape = '#';
+	landscape = c;
 }
 
 char Tile::get_land()

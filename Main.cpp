@@ -11,6 +11,7 @@ int main(void) {
 	}
 	Ecosystem eco(terrain_size);
 	eco.print_Eco();
+	cout << endl;
 	system("pause");
 	return 0;
 }
