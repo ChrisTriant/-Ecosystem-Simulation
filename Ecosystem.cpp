@@ -6,6 +6,9 @@ using namespace std;
 
 Ecosystem::Ecosystem(int t) :terrain_size(t) {
 	terrain = new Tile**[terrain_size];
+	waterT = 0;
+	hillT = 0;
+	valleyT = 0;
 	for (int i = 0; i < terrain_size; i++) {
 			terrain[i] = new Tile*[terrain_size-1];
 	}
@@ -18,6 +21,8 @@ Ecosystem::Ecosystem(int t) :terrain_size(t) {
 	GenerateLake();
 	GenerateHills();
 	GenerateMeadow();
+	CountElements();
+	PlacePlants();
 }
 
 void Ecosystem::print_Eco() {
@@ -44,11 +49,6 @@ void Ecosystem::print_Eco() {
 				}
 				else if (terrain[i][j]->get_land() == '^') {
 					SetConsoleTextAttribute(hConsole, 6);
-					cout << terrain[i][j]->get_land();
-					SetConsoleTextAttribute(hConsole, 7);
-					cout << " |";
-				}else {
-					SetConsoleTextAttribute(hConsole, 3);
 					cout << terrain[i][j]->get_land();
 					SetConsoleTextAttribute(hConsole, 7);
 					cout << " |";
@@ -120,7 +120,7 @@ void Ecosystem::GenerateLake()
 	int y = rand() % (terrain_size - lakesize);
 	for (int i=x; i < x+lakesize; i++) {
 		for (int j=y; j < y+lakesize; j++) {
-			terrain[i][j] = new Tile('@');
+			terrain[i][j] = new Tile('#');
 		}
 	}
 }
@@ -147,6 +147,76 @@ void Ecosystem::GenerateMeadow()
 		for (int j = 0; j < terrain_size; j++) {
 			if (terrain[i][j] == NULL) {
 				terrain[i][j] = new Tile('\"');
+			}
+		}
+	}
+}
+
+void Ecosystem::CountElements() {
+	for (int i = 0; i < terrain_size; i++) {
+		for (int j = 0; j < terrain_size; j++) {
+			if (terrain[i][j]->get_land() == '#') {
+				waterT++;
+			}
+			else if (terrain[i][j]->get_land() == '^') {
+				hillT++;
+			}
+			else {
+				valleyT++;
+			}
+		}
+	}
+}
+
+void Ecosystem::PlacePlants()
+{
+	srand(time(NULL));
+	for (int i = 0; i < terrain_size; i++)
+	{
+		for (int j = 0; j < terrain_size; j++)
+		{
+			int prob = rand() % 100 + 1;
+			if (prob < 50)
+			{
+				if (terrain[i][j]->get_land() == '#')
+				{    //algae
+					terrain[i][j]->addPlant(new Algae());
+					cout << "Algae generated in tile " << i << "-" << j << endl;
+				}
+				else if (terrain[i][j]->get_land() == '^')
+				{ // maple, pine
+					int morp = rand() % 1;
+					if (morp)
+					{
+						terrain[i][j]->addPlant(new Maple());
+						cout << "Maple generated in tile " << i << "-" << j << endl;
+					}
+					else
+					{
+						terrain[i][j]->addPlant(new Pine());
+						cout << "Pine generated in tile " << i << "-" << j << endl;
+					}
+				}
+				else
+				{ //grass, oak, maple
+					int grom = rand() % 3 + 1;
+					switch (grom) {
+					case 1:
+						terrain[i][j]->addPlant(new Grass());
+						cout << "Grass generated in tile " << i << "-" << j << endl;
+						break;
+					case 2:
+						terrain[i][j]->addPlant(new Oak());
+						cout << "Oak generated in tile " << i << "-" << j << endl;
+						break;
+					case 3:
+						terrain[i][j]->addPlant(new Maple());
+						cout << "Maple generated in tile " << i << "-" << j << endl;
+						break;
+					default:
+						break;
+					}
+				}
 			}
 		}
 	}

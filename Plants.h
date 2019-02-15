@@ -10,16 +10,18 @@ private:
 	int x, y;
 	char token;
 	int *breedingProb;
-	int sickProb;
+	int illnessProb;
 	int life;
 	int lifeFactor;
 protected:
 	virtual void IncLife();
 	virtual void LoseLife(int elf);
 public:
-	Plant(int t, int s, int l, int lf);
+	Plant(char t, int s, int l, int lf);
 	bool isSick();
-	virtual void operate() {}
+	bool isAlive();
+	int getLifeFac();
+	virtual void operate();
 	void breed(); // den 3ero ti prepei na kanei afto
 };
 
@@ -29,42 +31,18 @@ class Seedless : public Plant {
 private:
 	
 public:
-	void operate()
-	{
-		if (isSick())
-		{
-			life -= lifeFactor;
-		}
-		else
-		{
-			life += lifeFactor;
-		}
-		srand(time(NULL));
-		int prob = rand() % 100 + 1;
-		if (prob <= breedingProb[season] && (!isSick()))
-		{
-			breed();
-		}
-	}
+	Seedless(char t, int s, int l, int lf);
+	void operate();
 };
 
 class Grass : public Seedless {
 public:
-	Grass():Plant('G',15,5,2)
-	{ //prepei na fitrwnei opou yparxei pediada
-		breedingProb[season] = 15;
-	}
+	Grass();
 };
 
 class Algae : public Seedless {
-	Algae()
-	{ // anaptyssetai mono ekei pou yparxei nero
-		token = 'A';
-		life = 5;
-		breedingProb[season] = 25;
-		lifeFactor = 2;
-		sickProb = 25;
-	}
+public:
+	Algae();
 };
 
 class Seeded :public Plant {
@@ -73,78 +51,27 @@ private:
 	int seeds;
 	int size;
 public:
-	void GotEaten(int poso)
-	{
-		if (seeds > 0)
-		{
-			seeds -= poso; // ti tha geinei an to poso einai emgalitero apo seeds?
-		}
-		else
-		{
-			foliage -= poso;
-			life -= poso;
-		}
-	}
-	void operate()
-	{
-		if (isSick())
-		{
-			life -= lifeFactor;
-			seeds -= (2 * lifeFactor);
-			// na doume afto me to foliage kai to lifeFactor
-		}
-		else
-		{
-			life += lifeFactor;
-			seeds += (2 * lifeFactor);
-		}
-		srand(time(NULL));
-		int prob = rand() % 100 + 1;
-		if (prob <= breedingProb[season] && (!isSick()))
-		{
-			breed();
-		}
-	}
+	Seeded(char t, int s, int l, int lf, int f, int sd, int sz);
+	void GotEaten(int ehp);
+	void operate();
+protected:
+	void LoseSeed();
+	void LoseFoliage();
+
 };
 
 class Oak :public Seeded {
 
 public:
-	Oak()
-	{ // mono pediada
-		token = 'O';
-		size = 5;
-		seeds = 15;
-		foliage = 30;
-		//life = 5; // nomizw ta seeded den leitourgoun me life.
-		breedingProb[season] = 20;
-		lifeFactor = 15;
-		sickProb = 20;
-	}
+	Oak();
 };
+
 class Pine :public Seeded {
-	Pine()
-	{ // mono pediada
-		token = 'P';
-		size = 5;
-		seeds = 20;
-		foliage = 40;
-		//life = 5; // nomizw ta seeded den leitourgoun me life.
-		breedingProb[season] = 15;
-		lifeFactor = 20;
-		sickProb = 15;
-	}
+public:
+	Pine();
 };
+
 class Maple :public Seeded {
-	Maple()
-	{ // anaptyssetai se stereo perivallon
-		token = 'M';
-		size = 2;
-		seeds = 10;
-		foliage = 20;
-		//life = 5; // nomizw ta seeded den leitourgoun me life.
-		breedingProb[season] = 5;
-		lifeFactor = 10;
-		sickProb = 5;
-	}
+public:
+	Maple();
 };
