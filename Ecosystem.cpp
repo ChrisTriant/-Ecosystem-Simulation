@@ -115,7 +115,7 @@ void Ecosystem::GenerateRiver() {
 void Ecosystem::GenerateLake()
 {
 	srand(time(NULL));
-	int lakesize = rand() % (terrain_size / 3)+1 ;
+	int lakesize = rand() % (terrain_size / 3)+2 ;
 	int x = rand() % (terrain_size - lakesize);
 	int y = rand() % (terrain_size - lakesize);
 	for (int i=x; i < x+lakesize; i++) {
@@ -180,7 +180,7 @@ void Ecosystem::PlacePlants()
 			{
 				if (terrain[i][j]->get_land() == '#')
 				{    //algae
-					terrain[i][j]->addPlant(new Algae());
+					terrain[i][j]->addPlant(new Algae(i,j));
 					cout << "Algae generated in tile " << i << "-" << j << endl;
 				}
 				else if (terrain[i][j]->get_land() == '^')
@@ -188,12 +188,12 @@ void Ecosystem::PlacePlants()
 					int morp = rand() % 1;
 					if (morp)
 					{
-						terrain[i][j]->addPlant(new Maple());
+						terrain[i][j]->addPlant(new Maple(i,j));
 						cout << "Maple generated in tile " << i << "-" << j << endl;
 					}
 					else
 					{
-						terrain[i][j]->addPlant(new Pine());
+						terrain[i][j]->addPlant(new Pine(i,j));
 						cout << "Pine generated in tile " << i << "-" << j << endl;
 					}
 				}
@@ -202,15 +202,15 @@ void Ecosystem::PlacePlants()
 					int grom = rand() % 3 + 1;
 					switch (grom) {
 					case 1:
-						terrain[i][j]->addPlant(new Grass());
+						terrain[i][j]->addPlant(new Grass(i,j));
 						cout << "Grass generated in tile " << i << "-" << j << endl;
 						break;
 					case 2:
-						terrain[i][j]->addPlant(new Oak());
+						terrain[i][j]->addPlant(new Oak(i,j));
 						cout << "Oak generated in tile " << i << "-" << j << endl;
 						break;
 					case 3:
-						terrain[i][j]->addPlant(new Maple());
+						terrain[i][j]->addPlant(new Maple(i,j));
 						cout << "Maple generated in tile " << i << "-" << j << endl;
 						break;
 					default:

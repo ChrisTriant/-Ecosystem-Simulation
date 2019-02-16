@@ -1,7 +1,7 @@
 #include"Plants.h"
 using namespace std;
 
-Plant::Plant(char t, int s, int l, int lf) :token(t), illnessProb(s), life(l), lifeFactor(lf) {
+Plant::Plant(char t, int s, int l, int lf,int x,int y) :token(t), illnessProb(s), life(l), lifeFactor(lf),x(x),y(y) {
 	if (token == 'G') {
 		name = "Grass";
 	}
@@ -46,7 +46,7 @@ int Plant::getLifeFac() {
 /*##################################################*/
 /*###################SEEDLESS######################*/
 
-Seedless::Seedless(char t, int s, int l, int lf) :Plant(t, s, l, lf) {
+Seedless::Seedless(char t, int s, int l, int lf,int x,int y) :Plant(t, s, l, lf,x,y) {
 
 }
 
@@ -70,7 +70,7 @@ void Seedless::operate()
 /*##################################################*/
 /*###################SEEDED######################*/
 
-Seeded::Seeded(char t, int s, int l, int lf, int f, int sd, int sz) :Plant(t, s, l, lf), foliage(f), seeds(sd), size(sz) {
+Seeded::Seeded(char t, int s, int l, int lf, int f, int sd, int sz,int x,int y) :Plant(t, s, l, lf,x,y), foliage(f), seeds(sd), size(sz) {
 
 }
 
@@ -121,23 +121,23 @@ void Seeded::operate()
 
 	/*##################################################*/
 	/*#####################GRASS/ALGAE########################*/
-	Grass::Grass():Seedless('G', 15, 5, 2)
+	Grass::Grass(int x,int y):Seedless('G', 15, 5, 2,x,y)
 	{
 	}
 
-	Algae::Algae():Seedless('A', 25, 5, 2)
+	Algae::Algae(int x,int y):Seedless('A', 25, 5, 2,x,y)
 	{
 	}
 
 	/*##################################################*/
 
 	/*#########################OAK/PINE/MAPLE######################*/
-	Oak::Oak() : Seeded('O', 20, 30, 15, 30, 15, 5)
+	Oak::Oak(int x,int y) : Seeded('O', 20, 30, 15, 30, 15, 5,x,y)
 	{
 	}
-	Maple::Maple() : Seeded('M', 5, 20, 10, 20, 10, 2)
+	Maple::Maple(int x,int y) : Seeded('M', 5, 20, 10, 20, 10, 2,x,y)
 	{
 	}
-	Pine::Pine() : Seeded('P', 15, 40, 20, 40, 20, 5)
+	Pine::Pine(int x,int y) : Seeded('P', 15, 40, 20, 40, 20, 5,x,y)
 	{
 	}

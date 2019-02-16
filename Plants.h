@@ -17,7 +17,7 @@ protected:
 	virtual void IncLife();
 	virtual void LoseLife(int elf);
 public:
-	Plant(char t, int s, int l, int lf);
+	Plant(char t, int s, int l, int lf,int x,int y);
 	bool isSick();
 	bool isAlive();
 	int getLifeFac();
@@ -31,18 +31,18 @@ class Seedless : public Plant {
 private:
 	
 public:
-	Seedless(char t, int s, int l, int lf);
+	Seedless(char t, int s, int l, int lf,int x,int y);
 	void operate();
 };
 
 class Grass : public Seedless {
 public:
-	Grass();
+	Grass(int x,int y);
 };
 
 class Algae : public Seedless {
 public:
-	Algae();
+	Algae(int x, int y);
 };
 
 class Seeded :public Plant {
@@ -51,7 +51,7 @@ private:
 	int seeds;
 	int size;
 public:
-	Seeded(char t, int s, int l, int lf, int f, int sd, int sz);
+	Seeded(char t, int s, int l, int lf, int f, int sd, int sz,int x,int y);
 	void GotEaten(int ehp);
 	void operate();
 protected:
@@ -63,15 +63,15 @@ protected:
 class Oak :public Seeded {
 
 public:
-	Oak();
+	Oak(int x,int y);
 };
 
 class Pine :public Seeded {
 public:
-	Pine();
+	Pine(int x,int y);
 };
 
 class Maple :public Seeded {
 public:
-	Maple();
+	Maple(int x, int y);
 };
