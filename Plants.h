@@ -13,11 +13,11 @@ private:
 	int illnessProb;
 	int life;
 	int lifeFactor;
-protected:
-	virtual void IncLife();
-	virtual void LoseLife(int elf);
+
 public:
 	Plant(char t, int s, int l, int lf,int x,int y);
+	void IncLife();
+	void LoseLife(int elf);
 	bool isSick();
 	bool isAlive();
 	int getLifeFac();

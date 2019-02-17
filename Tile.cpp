@@ -18,3 +18,7 @@ Plant* Tile::getPlant()
 {
 	return plant;
 }
+
+void Tile::addAnimal(Animal* newanimal) {
+	animals.push_back(newanimal);
+}

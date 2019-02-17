@@ -19,4 +19,5 @@ public:
 	void GenerateMeadow();
 	void CountElements();
 	void PlacePlants();
+	void PlaceAnimals();
 };

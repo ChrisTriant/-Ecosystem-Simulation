@@ -23,6 +23,7 @@ Ecosystem::Ecosystem(int t) :terrain_size(t) {
 	GenerateMeadow();
 	CountElements();
 	PlacePlants();
+	PlaceAnimals();
 }
 
 void Ecosystem::print_Eco() {
@@ -215,6 +216,76 @@ void Ecosystem::PlacePlants()
 						break;
 					default:
 						break;
+					}
+				}
+			}
+		}
+	}
+}
+
+
+void Ecosystem::PlaceAnimals()
+{
+	srand(time(NULL));
+	for (int i = 0; i < terrain_size; i++)
+	{
+		for (int j = 0; j < terrain_size; j++)
+		{
+			int prob = rand() % 100 + 1;
+			if (prob < 50)
+			{
+				int amount = rand() % 5 + 1;
+				if (terrain[i][j]->get_land() == '#')
+				{	
+					for (int a = 0; a < amount; a++) {
+						terrain[i][j]->addAnimal(new Salmon(i, j));
+						cout << "Salmon generated in tile " << i << "-" << j << endl;
+					}
+				}
+				else if (terrain[i][j]->get_land() == '^')
+				{    // wolf, Bear
+					for (int a = 0; a < amount; a++) {
+						int anim = rand() % 2 ;
+						if (anim==1)
+						{
+							terrain[i][j]->addAnimal(new Wolf(i, j));
+							cout << "Wolf generated in tile " << i << "-" << j << endl;
+						}
+						else
+						{
+							terrain[i][j]->addAnimal(new Bear(i, j));
+							cout << "Bear generated in tile " << i << "-" << j << endl;
+						}
+					}
+				}
+				else
+				{    //Wolf, Fox
+					for (int a = 0; a < amount; a++) {
+						int anim = rand() % 4 + 1;
+						switch (anim) {
+						case 1:
+							terrain[i][j]->addAnimal(new Wolf(i, j));
+							cout << "Wolf generated in tile " << i << "-" << j << endl;
+							break;
+						case 2:
+							terrain[i][j]->addAnimal(new Fox(i, j));
+							cout << "Fox generated in tile " << i << "-" << j << endl;
+							break;
+						case 3:
+							terrain[i][j]->addAnimal(new Rabbit(i, j));
+							cout << "Rabbit generated in tile " << i << "-" << j << endl;
+							break;
+						case 4:
+							terrain[i][j]->addAnimal(new Deer(i, j));
+							cout << "Deer generated in tile " << i << "-" << j << endl;
+							break;
+						case 5:
+							terrain[i][j]->addAnimal(new GroundHog(i, j));
+							cout << "Groundhog generated in tile " << i << "-" << j << endl;
+							break;
+						default:
+							break;
+						}
 					}
 				}
 			}
