@@ -4,11 +4,15 @@
 using namespace std;
 
 
-Ecosystem::Ecosystem(int t) :terrain_size(t) {
+Ecosystem::Ecosystem(int t, int s, int sd) :terrain_size(t), season(s), simDuration(sd) {
 	terrain = new Tile**[terrain_size];
 	waterT = 0;
 	hillT = 0;
 	valleyT = 0;
+	hourOfDay = 0;
+	dayOfYear = 1;
+	timesSeasonChanged = 1;
+
 	for (int i = 0; i < terrain_size; i++) {
 			terrain[i] = new Tile*[terrain_size-1];
 	}
@@ -24,6 +28,7 @@ Ecosystem::Ecosystem(int t) :terrain_size(t) {
 	CountElements();
 	PlacePlants();
 	PlaceAnimals();
+	ApplySeason();
 }
 
 void Ecosystem::print_Eco() {
@@ -291,4 +296,305 @@ void Ecosystem::PlaceAnimals()
 			}
 		}
 	}
+}
+
+
+void Ecosystem::RunEcosystem()
+{
+	while (hourOfDay < 25)
+	{
+		if (dayOfYear == 90*timesSeasonChanged)
+		{
+			season++;
+			if (season >= 5) season = 1;
+			ApplySeason();
+			timesSeasonChanged++;
+		}
+
+		for (int i = 0; i < terrain_size; i++) {
+			for (int j = 0; j < terrain_size; j++) {
+				terrain[i][j]->AnimalMovement();
+				terrain[i][j]->AnimalEating();
+				/* carnivore eats another carnivore only after 8 days without food
+				** if herbivore eats enough -> does not eat for 7 days
+				*/
+				terrain[i][j]->CheckDeadEntities();
+			}
+		}
+
+		if (hourOfDay < 24)
+		{
+			hourOfDay++;
+		}
+		else
+		{
+			EndDay();
+
+			if (dayOfYear >= simDuration) break; //sim is over
+		}
+		
+	}
+
+}
+
+void Ecosystem::DailyReset()
+{
+	ResetHunger();
+	
+	if (dayOfYear%animal_growthPeriod == 0)
+	{
+		for (int i = 0; i < terrain_size; i++) {
+			for (int j = 0; j < terrain_size; j++) {
+				int k = 1;
+				Animal* animal;
+				while ( (animal = terrain[i][j]->getAnimal(k)) != NULL)
+				{
+					animal->Raise();
+					k++;
+				}
+			}
+		}
+	}
+	if (season!=4 && dayOfYear%plants_growthPeriod == 0)
+	{
+		for (int i = 0; i < terrain_size; i++) {
+			for (int j = 0; j < terrain_size; j++) {
+				Plant* tempPlant = terrain[i][j]->getPlant();
+				if (tempPlant != NULL) {
+					tempPlant->grow(season);
+				}
+			}
+		}
+	}
+	dayOfYear++;
+}
+
+void Ecosystem::ApplySeason()
+{
+	switch (season)
+	{
+	case 1:								//winter
+		plants_growthPeriod = 10;				
+		animal_growthPeriod = 30;
+		plants_breedingRepPeriod = 0;
+		herbivors_breedingRepPeriod = 18;
+		carnivore_breedingRepPeriod = 10;
+		AnimalSleep();
+		break;
+	case 2:								//spring
+		plants_growthPeriod = 5;
+		animal_growthPeriod = 20;
+		plants_breedingRepPeriod = 10;
+		herbivors_breedingRepPeriod = 12;
+		carnivore_breedingRepPeriod = 11;
+		AnimalWake();
+		break;
+	case 3:							  //summer
+		plants_growthPeriod = 10;
+		animal_growthPeriod = 30;
+		plants_breedingRepPeriod = 10;
+		herbivors_breedingRepPeriod = 8;
+		carnivore_breedingRepPeriod = 9;
+		break;
+	case 4:							//autumn
+		plants_growthPeriod = 0;
+		animal_growthPeriod = 15;
+		plants_breedingRepPeriod = 20;
+		herbivors_breedingRepPeriod = 5;
+		carnivore_breedingRepPeriod = 9;
+		break;
+	default:
+		break;
+	}
+}
+
+void Ecosystem::ResetHunger()
+{
+	for (int i = 0; i < terrain_size; i++) {
+		for (int j = 0; j < terrain_size; j++) {
+			int k = 1;
+			Animal* animal = terrain[i][j]->getAnimal(k);
+			while (animal != NULL)
+			{
+				animal->setEatenFood(0);
+				k++;
+				animal = terrain[i][j]->getAnimal(k);
+			}
+		}
+	}
+}
+
+void Ecosystem::PlantBreading(int i, int j)
+{
+	if(plants_breedingRepPeriod != 0)
+	if (dayOfYear%plants_breedingRepPeriod == 0)
+	{
+		Plant* temP = terrain[i][j]->getPlant();
+		if (temP != NULL)
+		{
+			srand(time(NULL));
+			int prob = rand() % 100 + 1;
+			if (prob <= temP->getBreedingProb(season))
+			{
+				Tile * tempTile = FindFreeTile(i, j);
+				if (tempTile != NULL)
+				{
+					char token = temP->getToken();
+					if (token == 'G')
+						tempTile->addPlant(new Grass(i, j));
+					else if ((token == 'A'))
+						tempTile->addPlant(new Algae(i, j));
+					else if ((token == 'O'))
+						tempTile->addPlant(new Oak(i, j));
+					else if ((token == 'P'))
+						tempTile->addPlant(new Pine(i, j));
+					else
+						tempTile->addPlant(new Maple(i, j));
+				}
+			}
+		}
+	}
+}
+
+void Ecosystem::AnimalBreeding(int i ,int j)
+{
+	int k = 1;
+	Animal* animal = terrain[i][j]->getAnimal(k);
+	while (animal != NULL)
+	{
+		if (animal->isAdult()) //isAdult does nothing (returns false always)
+		{
+			if ((animal->getToken() == 'H') && (dayOfYear%herbivors_breedingRepPeriod == 0))
+			{	// new instance of same type gets created at same tile
+
+				GiveBirth(animal, i, j);
+			}
+			else if ((animal->getToken() == 'C') && (dayOfYear%carnivore_breedingRepPeriod == 0))
+			{	// new instance of same type gets created at same tile
+
+				GiveBirth(animal, i, j);
+			}
+		}
+
+		k++;
+		animal = terrain[i][j]->getAnimal(k);
+	}
+}
+
+void Ecosystem::GiveBirth(Animal * animal, int i, int j)
+{
+
+	string name = animal->getName();
+
+	if (name == "Bear")
+	{
+		terrain[i][j]->addAnimal(new Bear(i, j));
+	}
+	else if (name == "Salmon")
+	{
+		terrain[i][j]->addAnimal(new Salmon(i, j));
+	}
+	else if (name == "Deer")
+	{
+		terrain[i][j]->addAnimal(new Deer(i, j));
+	}
+	else if (name == "GroundHog")
+	{
+		terrain[i][j]->addAnimal(new GroundHog(i, j));
+	}
+	else if (name == "Wolf")
+	{
+		terrain[i][j]->addAnimal(new Wolf(i, j));
+	}
+	else if (name == "Fox")
+	{
+		terrain[i][j]->addAnimal(new Fox(i, j));
+	}
+	else
+	{
+		terrain[i][j]->addAnimal(new Rabbit(i, j));
+	}
+	cout << "animal created" << endl;
+}
+
+Tile * Ecosystem::FindFreeTile(int &i, int &j)
+{
+	if (terrain[i][j - 1]->getPlant() == NULL)
+	{
+		j--;
+		return (terrain[i][j - 1]);
+	}
+	else if (terrain[i][j + 1]->getPlant() == NULL)
+	{
+		j++;
+		return (terrain[i][j + 1]);
+	}
+	else if (terrain[i + 1][j]->getPlant() == NULL)
+	{
+		i++;
+		return (terrain[i + 1][j]);
+	}
+	else if (terrain[i - 1][j]->getPlant() == NULL)
+	{
+		i--;
+		return (terrain[i - 1][j]);
+	}
+	else
+		return NULL;
+}
+
+void Ecosystem::AnimalSleep()
+{
+	for (int i = 0; i < terrain_size; i++) {
+		for (int j = 0; j < terrain_size; j++) {
+			int k = 1;
+			Animal* animal;
+			while ((animal = terrain[i][j]->getAnimal(k)) != NULL)
+			{
+				if (animal->CanHibernate())
+				{
+					animal->Hibernate();
+				}
+				k++;
+			}
+		}
+	}
+}
+
+void Ecosystem::AnimalWake()
+{
+	for (int i = 0; i < terrain_size; i++) {
+		for (int j = 0; j < terrain_size; j++) {
+			int k = 1;
+			Animal* animal;
+			while ((animal = terrain[i][j]->getAnimal(k)) != NULL)
+			{
+				if (animal->CanHibernate())
+				{
+					animal->Wake();
+				}
+				k++;
+			}
+		}
+	}
+}
+
+void Ecosystem::EndDay()
+{
+	hourOfDay = 0;
+	for (int i = 0; i < terrain_size; i++) {
+		for (int j = 0; j < terrain_size; j++) {
+			terrain[i][j]->CheckHunger();
+			terrain[i][j]->CheckDeadEntities();
+
+			AnimalBreeding(i, j);
+			PlantBreading(i, j);
+		}
+	}
+
+	// apo ekfwnhsh:
+	// epipleon, ta fyta anaplhrwnoun energeia kai pi8anws megalwnoun opws anafer8hke se prohgoumenh enothta <- wtf is this?
+
+	
+	DailyReset();	//that comes every cycle -> after 24 hours
 }

@@ -1,9 +1,11 @@
 #include<iostream>
-#include<cstring>
+#include<string>
+#include"Plants.h"
 
 class Animal {
 private:
 	std::string name;
+	char token;
 	int size;
 	int hungerCount;
 	int eatenFood;
@@ -16,41 +18,63 @@ private:
 	bool Hibernates;
 	bool inHibernation;
 public:
-	Animal(int s,int eC,int sp,std::string name,int x,int y,bool hib);
+	Animal(int s,int eC,int sp,std::string name,int x,int y,bool hib, char tok);
 	void Move();
 	virtual void Eat();
-	virtual void Raise();
+	virtual void Raise(int, int, int, int, int, int);
+	int getSize();
+	int getSpeed();
+	int getEatenFood();
+	void incEatenFood(int);
+	void setEatenFood(int);
+	void incEatCount();
+	int getEatCount();
+	std::string getName();
+	void setHungerCount(int);
+	void Die();
+	bool isalive();
+	char getToken();
+	bool CanHibernate();
+	bool isAdult();
+	void Hibernate();
+	void Wake();
 };
 
 class Herbivor: public Animal{
 private:
-	char token='H';
 	bool canClimb;
 	int neededFood;
 public:
 	Herbivor(int s, int sp, int nf, bool cc, int eC,std::string name,int x,int y,bool hib);
-	void Eat();
+	virtual void Eat(Plant* plant);
+	void Eat(Animal* animal);
+	void Raise(int s, int smax, int sp, int spmax, int ec, int ecmax, int nf, int nfmax);
+	bool getClimb();
+	int getNeededFood();
 };
 
 class Deer:public Herbivor {
 public:
 	Deer(int x,int y);
-
+	void Eat(Plant* plant);
 };
 
 class Rabbit:public Herbivor {
 public:
 	Rabbit(int x, int y);
+	void Eat(Plant* plant);
 };
 
 class GroundHog:public Herbivor{
 public:
 	GroundHog(int x, int y);
+	void Eat(Plant* plant);
 };
 
 class Salmon :public Herbivor {
 public:
 	Salmon(int x, int y);
+	void Eat(Plant* plant);
 };
 
 class Carnivore :public Animal {
@@ -61,57 +85,49 @@ protected:
 
 public:
 	Carnivore(int s, int eC, int sp, int a, int d, std::string n, int x, int y,bool hib);
-	// otan faei kano to hungerCount = 0
+	int getDefence();
+	virtual void Eat(Animal*);
+	int getAttack();
 };
 
 class Fox :public Carnivore {
-	/* alepu katiki mono se pediada
+	/*
 	** can walk anywhere
-	** can eat any smaller(<=) and slower(<) herbivore
-	** can't eat solomo
-	** if fight with carnivore -> biggest size win
-	** if same size -> biggest attack wins
-	** alepu growth -> all stats +1
-	** megisto growth -> 4,5,5,6,6 */
+	*/
 private:
 
 protected:
 
 public:
 	Fox(int x, int y);
+	void Eat(Animal*);
 };
 
 class Wolf :public Carnivore {
-	/* likos katiki opudipote den iparxi nero
+	/*
 	** can walk anywhere
-	** can eat any smaller(<=) and slower(<) herbivore
-	** can't eat solomo
-	** if fight with carnivore -> biggest size win
-	** if same size -> biggest attack wins
-	** alepu growth -> all stats +2 | (size +1)
-	** megisto growth -> 7,8,6,8,8 */
+	*/
 private:
 
 protected:
 
 public:
 	Wolf(int x, int y);
+	void Eat(Animal*);
 };
 
 class Bear :public Carnivore {
-	/* bear katiki mono vuno
+	/*
 	** can walk anywhere
-	** can eat any anything except bears
-	** adult bear can fuck anyone
 	** falls in xeimeria narki
-	** alepu growth -> all stats +2 | (speed + 0)
-	** megisto growth -> 10,10,10,4,10 */
+	*/
 private:
 
 protected:
 
 public:
 	Bear(int x, int y);
+	void Eat(Animal*);
 };
 
 

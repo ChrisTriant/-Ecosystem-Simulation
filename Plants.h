@@ -5,24 +5,35 @@
 class Plant {
 private:
 	bool sick;	/* den exo brei pote prepei na ipologizo an to fito einai arrwsto.
-				 * Oute 3eroume gia poso tha einai arrwsto */
+				 * Oute 3eroume gia poso tha einai arrwsto 
+				 * Mallon den xreiazetai to sick (den uparxei sthn ekfwnhsh
+				 * apla leei oti mporei na mhn anaparax8ei logo pithanotiton illnessprob
+				 * opote mallon sto grow() xreiazetai apla na baloume ena if pou koita tis pithanothtes na einai arrwsto
+				 */
 	std::string name;
 	int x, y;
 	char token;
-	int *breedingProb;
+	int breedingProb;
 	int illnessProb;
 	int life;
 	int lifeFactor;
 
 public:
-	Plant(char t, int s, int l, int lf,int x,int y);
+	Plant(char, int, int, int, int, int, int);
 	void IncLife();
-	void LoseLife(int elf);
+	virtual void LoseLife(int elf);
+	void LoseLife();
+	int getLife();
 	bool isSick();
 	bool isAlive();
+	virtual int getSize();
 	int getLifeFac();
+	int getToken();
+	std::string getName();
 	virtual void operate();
-	void breed(); // den 3ero ti prepei na kanei afto
+	virtual void grow(int);
+	int getIllnessProb(int);
+	int getBreedingProb(int);
 };
 
 
@@ -31,7 +42,7 @@ class Seedless : public Plant {
 private:
 	
 public:
-	Seedless(char t, int s, int l, int lf,int x,int y);
+	Seedless(char, int, int, int, int, int, int);
 	void operate();
 };
 
@@ -51,10 +62,10 @@ private:
 	int seeds;
 	int size;
 public:
-	Seeded(char t, int s, int l, int lf, int f, int sd, int sz,int x,int y);
-	void GotEaten(int ehp);
+	Seeded(char, int, int, int, int, int, int, int, int, int);
+	void LoseLife(int ehp);
 	void operate();
-protected:
+	int getSize();
 	void LoseSeed();
 	void LoseFoliage();
 
