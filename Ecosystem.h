@@ -4,12 +4,22 @@
 
 class Ecosystem {
 private:
-	Tile* **terrain ;
+	Tile* **terrain;
 	int terrain_size;
 	const int hill_number = 2;
 	int waterT;
 	int hillT;
 	int valleyT;
+	int total_plants;
+	int total_seeded;
+	int total_seedless;
+	int grass,algae;
+	int Oaks, Pines, Maples;
+	int total_animals;
+	int total_herbivores;
+	int total_carnivores;
+	int deers, rabbits, groundhogs, salmons;
+	int wolves, foxes, bears;
 	int dayOfYear;
 	int season;
 	int simDuration;
@@ -22,7 +32,9 @@ private:
 	int hourOfDay;
 public:
 	Ecosystem(int, int, int);
-	void print_Eco();
+	void printSystem();
+	void PrintPlantStatistics();
+	void PrintAnimalStatistics();
 	void GenerateRiver();
 	void GenerateLake();
 	void GenerateHills();
@@ -35,10 +47,12 @@ public:
 	void ApplySeason();
 	void ResetHunger();
 	void AnimalBreeding(int, int);
-	void GiveBirth(Animal *,int, int);
-	void PlantBreading(int, int);
+	void GiveBirth(Animal *, int, int);
+	void PlantBreeding(int, int);
 	Tile* FindFreeTile(int&, int&);
 	void AnimalSleep();
 	void AnimalWake();
 	void EndDay();
+	void AnimalMovement();
+	void AnimalEating();
 };

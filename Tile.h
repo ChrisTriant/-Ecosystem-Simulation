@@ -1,6 +1,7 @@
 #include<iostream>
 #include<vector>
 #include"Animals.h"
+
 class Tile {
 private:
 	char landscape;
@@ -18,4 +19,5 @@ public:
 	void AnimalMovement();
 	void CheckDeadEntities();
 	void CheckHunger();
+	void removeAnimal(int);
 };

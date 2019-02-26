@@ -17,13 +17,12 @@ int main(void) {
 		cout << "3. Summer" << endl;
 		cout << "4. Fall" << endl;
 		cin >> season;
-	} while(season <= 0 || season >= 5);
+	} while (season <= 0 || season >= 5);
 	do {
 		cout << "Enter sim duration in days:" << endl;
 		cin >> simDuration;
 	} while (simDuration <= 0);
 	Ecosystem eco(terrain_size, season, simDuration);
-	eco.print_Eco();
 	eco.RunEcosystem();
 	cout << endl;
 	system("pause");

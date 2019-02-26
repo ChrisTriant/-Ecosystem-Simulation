@@ -16,18 +16,24 @@ private:
 	bool inHeat;
 	int speed;
 	bool Hibernates;
+	bool Adult;
+	bool moved;
 	bool inHibernation;
 public:
-	Animal(int s,int eC,int sp,std::string name,int x,int y,bool hib, char tok);
-	void Move();
-	virtual void Eat();
-	virtual void Raise(int, int, int, int, int, int);
+	Animal(int s, int eC, int sp, std::string name, int x, int y, bool hib, char tok);
+	virtual bool Move(int, int, char);
+	void setXY(int, int);
+	virtual void Eat(Plant*);
+	virtual void Eat(Animal*);
+	virtual void Raise();
 	int getSize();
 	int getSpeed();
 	int getEatenFood();
 	void incEatenFood(int);
 	void setEatenFood(int);
 	void incEatCount();
+	void incHunger();
+	int getHunger();
 	int getEatCount();
 	std::string getName();
 	void setHungerCount(int);
@@ -35,46 +41,69 @@ public:
 	bool isalive();
 	char getToken();
 	bool CanHibernate();
+	bool isHiber();
 	bool isAdult();
 	void Hibernate();
 	void Wake();
+	void incSize();
+	void incSpeed();
+	void becameAdult();
+	int getX();
+	int getY();
+	bool hasMoved();
+	
+	void setMoved(bool);
 };
 
-class Herbivor: public Animal{
+class Herbivor : public Animal {
 private:
 	bool canClimb;
 	int neededFood;
 public:
-	Herbivor(int s, int sp, int nf, bool cc, int eC,std::string name,int x,int y,bool hib);
+	Herbivor(int s, int sp, int nf, bool cc, int eC, std::string name, int x, int y, bool hib);
 	virtual void Eat(Plant* plant);
+	virtual bool Move(int, int, char);
 	void Eat(Animal* animal);
-	void Raise(int s, int smax, int sp, int spmax, int ec, int ecmax, int nf, int nfmax);
+	virtual void Raise();
 	bool getClimb();
 	int getNeededFood();
+	void incNeededFood();
 };
 
-class Deer:public Herbivor {
+class Deer :public Herbivor {
 public:
-	Deer(int x,int y);
+	Deer(int x, int y);
+	bool Move(int, int, char);
 	void Eat(Plant* plant);
+	void Raise();
 };
 
-class Rabbit:public Herbivor {
+class Rabbit :public Herbivor {
 public:
 	Rabbit(int x, int y);
 	void Eat(Plant* plant);
+	bool Move(int, int, char);
+	void Raise();
 };
 
-class GroundHog:public Herbivor{
+class GroundHog :public Herbivor {
 public:
 	GroundHog(int x, int y);
+	bool Move(int, int, char);
 	void Eat(Plant* plant);
+	void Raise();
 };
 
 class Salmon :public Herbivor {
+private:
+	bool newborn;
 public:
 	Salmon(int x, int y);
 	void Eat(Plant* plant);
+	bool Move(int, int, char);
+	bool isNewB();
+	void setNewB(bool);
+	void Raise();
 };
 
 class Carnivore :public Animal {
@@ -84,51 +113,37 @@ private:
 protected:
 
 public:
-	Carnivore(int s, int eC, int sp, int a, int d, std::string n, int x, int y,bool hib);
+	Carnivore(int s, int eC, int sp, int a, int d, std::string n, int x, int y, bool hib);
 	int getDefence();
+	bool Move(int, int, char);
+	void incDefence();
 	virtual void Eat(Animal*);
 	int getAttack();
+	void incAttack();
+	virtual void Raise();
 };
 
 class Fox :public Carnivore {
-	/*
-	** can walk anywhere
-	*/
-private:
-
-protected:
 
 public:
 	Fox(int x, int y);
 	void Eat(Animal*);
+	void Raise();
 };
 
 class Wolf :public Carnivore {
-	/*
-	** can walk anywhere
-	*/
-private:
-
-protected:
 
 public:
 	Wolf(int x, int y);
 	void Eat(Animal*);
+	void Raise();
 };
 
 class Bear :public Carnivore {
-	/*
-	** can walk anywhere
-	** falls in xeimeria narki
-	*/
-private:
-
-protected:
 
 public:
 	Bear(int x, int y);
 	void Eat(Animal*);
+	void Raise();
 };
-
-
 

@@ -27,30 +27,59 @@ void Tile::addAnimal(Animal* newanimal) {
 
 Animal* Tile::getAnimal(int i)
 {
-	if(i <= (animalCount-1)) return animals[i];
+	if (i <= (animalCount - 1)) return animals[i];
 	else return NULL;
 }
 
 void Tile::AnimalEating()
 {
+	for (unsigned int i = 0; i < animalCount; i++) {
+		if (animals.at(i) != NULL && animals.at(i)->isalive()) 
+		{
+
+				if (animals[i]->getToken() == 'H' && plant != NULL)
+				{
+					animals[i]->Eat(plant);
+				}
+				if (animals[i]->getToken() == 'C')
+				{ 
+					int j = i+1;
+					if (j >= animalCount) j = 0;
+					while (animals.at(j) != NULL && animals.at(j)->isalive())
+					{
+						if (j == i && !(j+1)>=animalCount)j++;
+						if (animals[i]->getHunger() > 8)
+						{
+							animals[i]->Eat(animals.at(j));
+						}
+						else if (animals.at(j)->getToken() == 'H')	animals[i]->Eat(animals.at(j));
+						j++;
+						if (j >= animalCount) break;
+					}
+					
+				}
+				break;
+		}
+	}
 }
 
 
 
 void Tile::AnimalMovement()
 {
+
 }
 
 void Tile::CheckDeadEntities()
 {// anything dead in tile gets deleted
 	std::vector<Animal*>::iterator it;
-	for (int i = 0; i < animals.size(); i++) {
-		it =animals.begin();
+	for (unsigned int i = 0; i < animalCount; i++) {
 		if (animals.at(i) != NULL && !(animals.at(i)->isalive())) {
-			animals.erase(it);
-			it--;
+			animals.erase(animals.begin() + i);
+			std::cout << "I'm dead" << std::endl;
+			animalCount--;
+			i--;
 		}
-		it++;
 	}
 
 	if (plant != NULL)
@@ -71,13 +100,20 @@ void Tile::CheckHunger()
 	{
 		if (animal->getEatenFood() == 0)
 		{
-			animal->incEatCount();
+			animal->incHunger();
 		}
-		if ((animal->getEatenFood()) >= 10)
+		if ((animal->getHunger()) >= 10)
 		{
 			animal->Die();
 		}
 		k++;
 		animal = getAnimal(k);
 	}
+}
+
+void Tile::removeAnimal(int i)
+{
+	animals[i] = NULL;
+	animals.erase(animals.begin() + i);
+	animalCount--;
 }

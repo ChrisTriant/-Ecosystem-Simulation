@@ -5,7 +5,7 @@
 class Plant {
 private:
 	bool sick;	/* den exo brei pote prepei na ipologizo an to fito einai arrwsto.
-				 * Oute 3eroume gia poso tha einai arrwsto 
+				 * Oute 3eroume gia poso tha einai arrwsto
 				 * Mallon den xreiazetai to sick (den uparxei sthn ekfwnhsh
 				 * apla leei oti mporei na mhn anaparax8ei logo pithanotiton illnessprob
 				 * opote mallon sto grow() xreiazetai apla na baloume ena if pou koita tis pithanothtes na einai arrwsto
@@ -13,13 +13,13 @@ private:
 	std::string name;
 	int x, y;
 	char token;
-	int breedingProb;
-	int illnessProb;
+	int breedingProb[4];
+	int illnessProb[4];
 	int life;
 	int lifeFactor;
 
 public:
-	Plant(char, int, int, int, int, int, int);
+	Plant(char, int, int, int, int);
 	void IncLife();
 	virtual void LoseLife(int elf);
 	void LoseLife();
@@ -28,7 +28,7 @@ public:
 	bool isAlive();
 	virtual int getSize();
 	int getLifeFac();
-	int getToken();
+	char getToken();
 	std::string getName();
 	virtual void operate();
 	virtual void grow(int);
@@ -40,7 +40,7 @@ public:
 
 class Seedless : public Plant {
 private:
-	
+
 public:
 	Seedless(char, int, int, int, int, int, int);
 	void operate();
@@ -48,7 +48,7 @@ public:
 
 class Grass : public Seedless {
 public:
-	Grass(int x,int y);
+	Grass(int x, int y);
 };
 
 class Algae : public Seedless {
@@ -68,18 +68,17 @@ public:
 	int getSize();
 	void LoseSeed();
 	void LoseFoliage();
-
 };
 
 class Oak :public Seeded {
 
 public:
-	Oak(int x,int y);
+	Oak(int x, int y);
 };
 
 class Pine :public Seeded {
 public:
-	Pine(int x,int y);
+	Pine(int x, int y);
 };
 
 class Maple :public Seeded {
