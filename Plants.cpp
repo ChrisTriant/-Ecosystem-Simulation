@@ -17,7 +17,6 @@ Plant::Plant(char t, int l, int lf, int x, int y) : token(t), life(l), lifeFacto
 	else if (token == 'M') {
 		name = "Maple";
 	}
-
 	srand(time(NULL));
 	if (token == 'A' || token == 'G') {
 		illnessProb[0] = rand() % 11 + 30;
@@ -37,7 +36,7 @@ Plant::Plant(char t, int l, int lf, int x, int y) : token(t), life(l), lifeFacto
 		breedingProb[0] = 0;
 		breedingProb[1] = 100;
 		breedingProb[2] = rand() % 11 + 80;
-		breedingProb[3] = rand() %11 + 50;
+		breedingProb[3] = rand() % 11 + 50;
 	}
 }
 
@@ -85,6 +84,16 @@ int Plant::getBreedingProb(int season)
 {
 	//return breedingProb;
 	return breedingProb[season];
+}
+
+bool Plant::isNewB()
+{
+	return newborn;
+}
+
+void Plant::setNewB(bool newb)
+{
+	newborn = newb;
 }
 
 
@@ -192,6 +201,16 @@ void Seeded::LoseSeed() {
 }
 void Seeded::LoseFoliage() {
 	foliage--;
+}
+
+int Seeded::getFoliage()
+{
+	return foliage;
+}
+
+int Seeded::getSeeds()
+{
+	return seeds;
 }
 
 

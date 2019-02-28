@@ -13,7 +13,7 @@ private:
 	int total_plants;
 	int total_seeded;
 	int total_seedless;
-	int grass,algae;
+	int grass, algae;
 	int Oaks, Pines, Maples;
 	int total_animals;
 	int total_herbivores;
@@ -55,4 +55,8 @@ public:
 	void EndDay();
 	void AnimalMovement();
 	void AnimalEating();
+	void PlantCount(int, int);
+	void AnimalCount(int, int);
+	void TotalsInit();
+	void TileAnalytics(int i, int j);
 };

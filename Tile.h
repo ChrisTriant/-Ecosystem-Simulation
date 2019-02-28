@@ -7,6 +7,8 @@ private:
 	char landscape;
 	std::vector<Animal*> animals;
 	int animalCount;
+	int herbCount;
+	int carnCount;
 	Plant* plant;
 public:
 	Tile(char c);

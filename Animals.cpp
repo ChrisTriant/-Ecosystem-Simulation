@@ -5,6 +5,7 @@ using namespace std;
 Animal::Animal(int s, int eC, int sp, string name, int x, int y, bool hib, char tok) :size(s), eatCount(eC), speed(sp), name(name), x(x), y(y), Hibernates(hib), isAlive(true), token(tok), Adult(false) {
 	eatenFood = 0;
 	hungerCount = 0;
+	Wake();
 }
 
 bool Animal::Move(int, int, char)
@@ -19,11 +20,13 @@ void Animal::setXY(int posox, int posoy)
 }
 
 
-void Animal::Eat(Plant*)
+bool Animal::Eat(Plant*)
 {
+	return true;
 }
-void Animal::Eat(Animal*)
+bool Animal::Eat(Animal*)
 {
+	return true;
 }
 
 void Animal::Raise()
@@ -169,8 +172,9 @@ Herbivor::Herbivor(int s, int sp, int nf, bool cc, int eC, string name, int x, i
 {
 }
 
-void Herbivor::Eat(Plant * plant)
+bool Herbivor::Eat(Plant * plant)
 {
+	return true;
 }
 
 bool Herbivor::Move(int, int, char)
@@ -178,20 +182,21 @@ bool Herbivor::Move(int, int, char)
 	return false;
 }
 
-void Herbivor::Eat(Animal * animal)
+bool Herbivor::Eat(Animal * animal)
 {
 	cout << "im tired of being a vegan\n";
+	return true;
 	// lol
 }
 
 void Herbivor::Raise()
 {
-/*	Animal::Raise(s, smax, sp, spmax, ec, ecmax);
-	while (nf > 0 && neededFood < nfmax)
-	{
-		neededFood++;
-		nf--;
-	}*/
+	/*	Animal::Raise(s, smax, sp, spmax, ec, ecmax);
+		while (nf > 0 && neededFood < nfmax)
+		{
+			neededFood++;
+			nf--;
+		}*/
 }
 
 bool Herbivor::getClimb()
@@ -222,33 +227,35 @@ bool Deer::Move(int x, int y, char type)
 
 }
 
-void Deer::Eat(Plant * plant)
+bool Deer::Eat(Plant * plant)
 {
 	if (plant == NULL || !(plant->isAlive())) {
-		cout << "There is no plant in this tile\n";
-		return;
+	//	cout << "There is no plant in this tile\n";
+		return false;
 	}
 	if (getEatenFood() == getNeededFood()) {
-		cout << "Deer is no longer hungry\n";
-		return;
+	//	cout << "Deer is no longer hungry\n";
+		return false;
 	}
 	if (getSize() + 4 > plant->getSize()) {
 
 		if (getEatCount() < plant->getLife()) {
 			incEatenFood(getEatCount());
-			cout << "Deer ate " << plant->getName() << endl;
+			//cout << "Deer ate " << plant->getName() << endl;
 			plant->LoseLife(getEatCount());
 		}
 		else {
 			incEatenFood(plant->getLife());
-			cout << "Deer ate " << plant->getName() << endl;
+	//		cout << "Deer ate " << plant->getName() << endl;
 			plant->LoseLife(plant->getLife());
 		}
 		if (getEatenFood() == getNeededFood()) {
-			cout << "Deer is no longer hungry\n";
+	//		cout << "Deer is no longer hungry\n";
 			setHungerCount(0);
+			return true;
 		}
 	}
+	return false;
 }
 
 void Deer::Raise()
@@ -287,38 +294,39 @@ Rabbit::Rabbit(int x, int y) : Herbivor(1, 2, 2, false, 1, "Rabbit", x, y, false
 
 }
 
-void Rabbit::Eat(Plant * plant)
+bool Rabbit::Eat(Plant * plant)
 {
 	if (plant == NULL || !(plant->isAlive())) {
-		cout << "There is no plant in this tile\n";
-		return;
+	//	cout << "There is no plant in this tile\n";
+		return false;
 	}
 
 	if (getEatenFood() == getNeededFood()) {
-		cout << "Rabbit is no longer hungry\n";
-		return;
+//		cout << "Rabbit is no longer hungry\n";
+		return true;
 	}
 
 	if (plant->getToken() == 'A') {
-		cout << "Rabbit can't eat algae\n";
-		return;
+	//	cout << "Rabbit can't eat algae\n";
+		return false;
 	}
 	if (getSize() >= plant->getSize()) {
 		if (getEatCount() < plant->getLife()) {
 			incEatenFood(getEatCount());
 			plant->LoseLife(getEatCount());
-			cout << "Rabbit ate " << plant->getName() << endl;
+			//cout << "Rabbit ate " << plant->getName() << endl;
 		}
 		else {
 			incEatenFood(plant->getLife());
 			plant->LoseLife(plant->getLife());
-			cout << "Groundhog ate " << plant->getName() << endl;
+			//cout << "Groundhog ate " << plant->getName() << endl;
 		}
 		if (getEatenFood() == getNeededFood()) {
-			cout << "Rabbit is no longer hungry\n";
+	//	cout << "Rabbit is no longer hungry\n";
 			setHungerCount(0);
 		}
 	}
+	return false;
 }
 
 bool Rabbit::Move(int x, int y, char type)
@@ -370,7 +378,7 @@ GroundHog::GroundHog(int x, int y) :Herbivor(2, 3, 3, false, 1, "Groundhog", x, 
 bool GroundHog::Move(int x, int y, char type)
 {
 	if (isHiber()) {
-		cout << "Groundhog is in hibernation\n";
+	//	cout << "Groundhog is in hibernation\n";
 		return false;
 	}
 	if (type != '#')
@@ -381,38 +389,38 @@ bool GroundHog::Move(int x, int y, char type)
 	return false;
 }
 
-void GroundHog::Eat(Plant * plant)
+bool GroundHog::Eat(Plant * plant)
 {
 	if (isHiber()) {
-		cout << "Groundhog is in hibernation\n";
-		return;
+		//cout << "Groundhog is in hibernation\n";
+		return false;
 	}
 	if (plant == NULL || !(plant->isAlive())) {
-		cout << "There is no plant in this tile\n";
-		return;
+	//	cout << "There is no plant in this tile\n";
+		return false;
 	}
 	if (getEatenFood() == getNeededFood()) {
-		cout << "Groundhog is no longer hungry\n";
-		return;
+	//	cout << "Groundhog is no longer hungry\n";
+		return true;
 	}
 	if (plant->getToken() == 'A') {
-		cout << "Groundhog can't eat algae\n";
-		return;
+	//	cout << "Groundhog can't eat algae\n";
+		return false;
 	}
 	if (!getClimb()) {
 		if (getSize() >= plant->getSize()) {
 			if (getEatCount() < plant->getLife()) {
 				incEatenFood(getEatCount());
 				plant->LoseLife(getEatCount());
-				cout << "Groundhog ate "<<plant->getName()<<endl;
+			//	cout << "Groundhog ate " << plant->getName() << endl;
 			}
 			else {
 				incEatenFood(plant->getLife());
 				plant->LoseLife(plant->getLife());
-				cout << "Groundhog ate " << plant->getName() << endl;
+			//	cout << "Groundhog ate " << plant->getName() << endl;
 			}
 			if (getEatenFood() == getNeededFood()) {
-				cout << "Groundhog is no longer hungry\n";
+		//		cout << "Groundhog is no longer hungry\n";
 				setHungerCount(0);
 			}
 		}
@@ -422,20 +430,20 @@ void GroundHog::Eat(Plant * plant)
 			if (getEatCount() < plant->getLife()) {
 				incEatenFood(getEatCount());
 				plant->LoseLife(getEatCount());
-				cout << "Groundhog ate " << plant->getName() << endl;
+		//		cout << "Groundhog ate " << plant->getName() << endl;
 			}
 			else {
 				incEatenFood(plant->getLife());
 				plant->LoseLife(plant->getLife());
-				cout << "Groundhog ate " << plant->getName() << endl;
+		//		cout << "Groundhog ate " << plant->getName() << endl;
 			}
 			if (getEatenFood() == getNeededFood()) {
-				cout << "Groundhog is no longer hungry\n";
+		//		cout << "Groundhog is no longer hungry\n";
 				setHungerCount(0);
 			}
 		}
 	}
-
+	return false;
 }
 
 void GroundHog::Raise()
@@ -474,35 +482,35 @@ Salmon::Salmon(int x, int y) :Herbivor(1, 5, 1, false, 1, "Salmon", x, y, false)
 	becameAdult();
 }
 
-void Salmon::Eat(Plant * plant)
+bool Salmon::Eat(Plant * plant)
 {
 	if (plant == NULL || !(plant->isAlive())) {
-		cout << "There is no plant in this tile\n";
-		return;
+	//	cout << "There is no plant in this tile\n";
+		return false;
 	}
 	if (getEatenFood() == getNeededFood()) {
-		cout << "Salmon is no longer hungry\n";
-		return;
+	//	cout << "Salmon is no longer hungry\n";
+		return true;
 	}
 	if (getEatCount() < plant->getLife()) {
 		incEatenFood(getEatCount());
 		plant->LoseLife(getEatCount());
-		cout << "Salmon ate algae\n";
+	//	cout << "Salmon ate algae\n";
 		if (getEatenFood() == getNeededFood()) {
-			cout << "Salmon is no longer hungry\n";
+		//	cout << "Salmon is no longer hungry\n";
 			setHungerCount(0);
 		}
 	}
 	else {
 		incEatenFood(plant->getLife());
 		plant->LoseLife(plant->getLife());
-		cout << "Salmon ate algae\n";
+	//	cout << "Salmon ate algae\n";
 		if (getEatenFood() == getNeededFood()) {
-			cout << "Salmon is no longer hungry\n";
+		//	cout << "Salmon is no longer hungry\n";
 			setHungerCount(0);
 		}
 	}
-
+	return false;
 }
 
 bool Salmon::Move(int x, int y, char type)
@@ -528,7 +536,7 @@ bool Salmon::isNewB()
 
 void Salmon::Raise()
 {
-	//Herbivor::Raise(0, 0, 0, 0, 0, 0, 0, 0);
+
 }
 
 
@@ -537,9 +545,9 @@ Carnivore::Carnivore(int s, int eC, int sp, int a, int d, std::string n, int x, 
 
 }
 
-void Carnivore::Eat(Animal* animal)
+bool Carnivore::Eat(Animal* animal)
 {
-
+	return false;
 }
 
 int Carnivore::getDefence()
@@ -584,45 +592,56 @@ Fox::Fox(int x, int y) : Carnivore(1, 2, 1, 1, 1, "Fox", x, y, false) {
 
 }
 
-void Fox::Eat(Animal* animal) {
-	string enemyName = animal->getName();
-	char enemyToken = animal->getToken();
-	int enemySize = animal->getSize();
-	int enemySpeed = animal->getSpeed();
-	int enemyDefence = ((Carnivore*)animal)->getDefence();
-	int ownSize = getSize();
-	int ownSpeed = getSpeed();
-	int ownAttack = getAttack();
+bool Fox::Eat(Animal* animal) {
+	if (getHunger() != 0) 
+	{
+		string enemyName = animal->getName();
+		char enemyToken = animal->getToken();
+		int enemySize = animal->getSize();
+		int enemySpeed = animal->getSpeed();
+		int enemyDefence = ((Carnivore*)animal)->getDefence();
+		int ownSize = getSize();
+		int ownSpeed = getSpeed();
+		int ownAttack = getAttack();
 
-	if (enemyToken == 'H')  // if is herbivor
-	{
-		if ((ownSize >= enemySize) && (ownSpeed > enemySpeed))
+		if (enemyToken == 'H')  // if is herbivor
 		{
-			if (enemyName != "Salmon")
+			if ((ownSize >= enemySize) && (ownSpeed > enemySpeed))
+			{
+				if (enemyName != "Salmon")
+				{
+					setHungerCount(0);
+					incEatenFood(1);
+					animal->Die();
+				//	cout << "Fox is no longer hungry\n";
+					return true;
+				}
+			}
+		}
+		else
+		{
+			if (ownSize > enemySize)
 			{
 				setHungerCount(0);
+				incEatenFood(1);
 				animal->Die();
-				cout << "Fox is no longer hungry\n";
+			//	cout << "Fox is no longer hungry\n";
+				return true;
+			}
+			else if (ownSize == enemySize)
+			{
+				if (ownAttack > enemyDefence)
+				{
+					setHungerCount(0);
+					incEatenFood(1);
+					animal->Die();
+				//	cout << "Fox is no longer hungry\n";
+					return true;
+				}
 			}
 		}
 	}
-	else
-	{
-		if (ownSize > enemySize)
-		{
-			setHungerCount(0);
-			animal->Die();
-		}
-		else if (ownSize == enemySize)
-		{
-			if (ownAttack > enemyDefence)
-			{
-				setHungerCount(0);
-				animal->Die();
-				cout << "Fox is no longer hungry\n";
-			}
-		}
-	}
+	return false;
 }
 
 
@@ -668,45 +687,56 @@ Wolf::Wolf(int x, int y) : Carnivore(1, 2, 2, 2, 2, "Wolf", x, y, false) {
 }
 
 
-void Wolf::Eat(Animal* animal) {
-	string enemyName = animal->getName();
-	char enemyToken = animal->getToken();
-	int enemySize = animal->getSize();
-	int enemySpeed = animal->getSpeed();
-	int enemyDefence = ((Carnivore*)animal)->getDefence();
-	int ownSize = getSize();
-	int ownSpeed = getSpeed();
-	int ownAttack = getAttack();
+bool Wolf::Eat(Animal* animal) {
+	if (getHunger() != 0)
+	{
+		string enemyName = animal->getName();
+		char enemyToken = animal->getToken();
+		int enemySize = animal->getSize();
+		int enemySpeed = animal->getSpeed();
+		int enemyDefence = ((Carnivore*)animal)->getDefence();
+		int ownSize = getSize();
+		int ownSpeed = getSpeed();
+		int ownAttack = getAttack();
 
-	if (enemyToken == 'H')  // if is herbivor
-	{
-		if ((ownSize >= enemySize) && (ownSpeed > enemySpeed))
+		if (enemyToken == 'H')  // if is herbivor
 		{
-			if (enemyName != "Salmon")
+			if ((ownSize >= enemySize) && (ownSpeed > enemySpeed))
+			{
+				if (enemyName != "Salmon")
+				{
+					setHungerCount(0);
+					incEatenFood(1);
+					animal->Die();
+				//	cout << "Wolf is no longer hungry\n";
+					return true;
+				}
+			}
+		}
+		else
+		{
+			if (ownSize > enemySize)
 			{
 				setHungerCount(0);
+				incEatenFood(1);
 				animal->Die();
-				cout << "Wolf is no longer hungry\n";
+			//	cout << "Wolf is no longer hungry\n";
+				return true;
+			}
+			else if (ownSize == enemySize)
+			{
+				if (ownAttack > enemyDefence)
+				{
+					setHungerCount(0);
+					incEatenFood(1);
+					animal->Die();
+				//	cout << "Wolf is no longer hungry\n";
+					return true;
+				}
 			}
 		}
 	}
-	else
-	{
-		if (ownSize > enemySize)
-		{
-			setHungerCount(0);
-			animal->Die();
-		}
-		else if (ownSize == enemySize)
-		{
-			if (ownAttack > enemyDefence)
-			{
-				setHungerCount(0);
-				animal->Die();
-				cout << "Wolf is no longer hungry\n";
-			}
-		}
-	}
+	return false;
 }
 
 void Wolf::Raise()
@@ -751,53 +781,73 @@ Bear::Bear(int x, int y) : Carnivore(3, 5, 4, 6, 6, "Bear", x, y, true) {
 }
 
 
-void Bear::Eat(Animal* animal) {
+bool Bear::Eat(Animal* animal) {
 	if (isHiber()) {
-		cout << "Bear is in hibernation\n";
-		return;
+		cout << "Bear is in hibernation\n";				
+		setHungerCount(0);
+		incEatenFood(1);
+		return true;
 	}
-	string enemyName = animal->getName();
-	char enemyToken = animal->getToken();
-	int enemySize = animal->getSize();
-	int enemySpeed = animal->getSpeed();
-	int enemyDefence = ((Carnivore*)animal)->getDefence();
-	int ownSize = getSize();
-	int ownSpeed = getSpeed();
-	int ownAttack = getAttack();
+	if (getHunger() != 0)
+	{
+		string enemyName = animal->getName();
+		char enemyToken = animal->getToken();
+		int enemySize = animal->getSize();
+		int enemySpeed = animal->getSpeed();
+		int enemyDefence = ((Carnivore*)animal)->getDefence();
+		int ownSize = getSize();
+		int ownSpeed = getSpeed();
+		int ownAttack = getAttack();
 
-	if (enemyToken == 'H')  // if is herbivor
-	{
-		if ((ownSize >= enemySize) && (ownSpeed > enemySpeed))
+		if (enemyToken == 'H')  // if is herbivor
 		{
-			setHungerCount(0);
-			animal->Die();
-			cout << "Bear is no longer hungry\n";
+			if (animal->getName()=="Salmon")
+			{
+
+				animal->Die();
+				//		cout << "Bear is no longer hungry\n";
+				return true;
+			}
+			if ((ownSize >= enemySize) && (ownSpeed > enemySpeed))
+			{
+
+				animal->Die();
+		//		cout << "Bear is no longer hungry\n";
+				return true;
+			}
 		}
-	}
-	else
-	{
-		if (ownSize == 10) // if bear adult
+		else
 		{
-			setHungerCount(0);
-			animal->Die();
-			cout << "Bear is no longer hungry\n";
-		}
-		else if (ownSize > enemySize)
-		{
-			setHungerCount(0);
-			animal->Die();
-			cout << "Bear is no longer hungry\n";
-		}
-		else if (ownSize == enemySize)
-		{
-			if (ownAttack > enemyDefence)
+			if (ownSize == 10) // if bear adult
+			{
+				setHungerCount(0);
+				incEatenFood(1);
+				animal->Die();
+		//		cout << "Bear is no longer hungry\n";
+				return true;
+			}
+			else if (ownSize > enemySize)
 			{
 				setHungerCount(0);
 				animal->Die();
-				cout << "Bear is no longer hungry\n";
+				incEatenFood(1);
+	//			cout << "Bear is no longer hungry\n";
+				return true;
+			}
+			else if (ownSize == enemySize)
+			{
+				if (ownAttack > enemyDefence)
+				{
+					setHungerCount(0);
+					incEatenFood(1);
+					animal->Die();
+		//			cout << "Bear is no longer hungry\n";
+					return true;
+				}
 			}
 		}
 	}
+	return false;
 }
 
 void Bear::Raise()

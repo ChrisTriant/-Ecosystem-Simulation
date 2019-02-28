@@ -53,7 +53,7 @@ Ecosystem::Ecosystem(int t, int s, int sd) :terrain_size(t), season(s), simDurat
 
 void Ecosystem::printSystem() {
 	HANDLE hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
-	cout << "Day of year: " << dayOfYear << endl<<endl;
+	cout << "Day of year: " << dayOfYear << endl << endl;
 	for (int i = 0; i < terrain_size; i++) {
 		for (int s = 0; s < terrain_size; s++) {
 			cout << "-----";
@@ -112,6 +112,7 @@ void Ecosystem::printSystem() {
 
 void Ecosystem::PrintPlantStatistics()
 {
+
 	cout << endl;
 	cout << "Plant statistics:\n";
 	cout << "Total Plants: " << total_plants << endl;
@@ -128,12 +129,12 @@ void Ecosystem::PrintAnimalStatistics()
 {
 	cout << endl;
 	cout << "Animal statistics:\n";
-	cout << "Total Animals: " << total_animals << endl<<endl;
+	cout << "Total Animals: " << total_animals << endl << endl;
 	cout << "Total herbivores: " << total_herbivores << endl;
 	cout << "Total deers: " << deers << endl;
 	cout << "Total rabbits: " << rabbits << endl;
 	cout << "Total groundhogs: " << groundhogs << endl;
-	cout << "Total salmons: " << salmons << endl<<endl;
+	cout << "Total salmons: " << salmons << endl << endl;
 	cout << "Total carnivores: " << total_carnivores << endl;
 	cout << "Total wolves: " << wolves << endl;
 	cout << "Total foxes: " << foxes << endl;
@@ -218,8 +219,8 @@ void Ecosystem::GenerateHills()
 		}
 		for (int i = x; i < x + hillsize; i++) {
 			for (int j = y; j < y + hillsize; j++) {
-				if(terrain[i][j]==NULL)
-				terrain[i][j] = new Tile('^');
+				if (terrain[i][j] == NULL)
+					terrain[i][j] = new Tile('^');
 			}
 		}
 	}
@@ -255,15 +256,18 @@ void Ecosystem::CountElements() {
 void Ecosystem::PlacePlants()
 {
 	srand(time(NULL));
+	int prob;
+	int morp;
+	int grom;
 	for (int i = 0; i < terrain_size; i++)
 	{
 		for (int j = 0; j < terrain_size; j++)
 		{
-			int prob = rand() % 100 + 1;
+			prob = rand() % 100 + 1;
 			if (prob < 50)
 			{
 				if (terrain[i][j]->get_land() == '#')
-				{    //algae
+				{   //algae
 					terrain[i][j]->addPlant(new Algae(i, j));
 					cout << "Algae generated in tile " << i << "-" << j << endl;
 					algae++;
@@ -271,7 +275,7 @@ void Ecosystem::PlacePlants()
 				}
 				else if (terrain[i][j]->get_land() == '^')
 				{ // maple, pine
-					int morp = rand() % 1;
+					morp = rand() % 2;
 					if (morp)
 					{
 						terrain[i][j]->addPlant(new Maple(i, j));
@@ -289,7 +293,7 @@ void Ecosystem::PlacePlants()
 				}
 				else
 				{ //grass, oak, maple
-					int grom = rand() % 3 + 1;
+					grom = rand() % 3 + 1;
 					switch (grom) {
 					case 1:
 						terrain[i][j]->addPlant(new Grass(i, j));
@@ -334,11 +338,15 @@ void Ecosystem::PlaceAnimals()
 				if (terrain[i][j]->get_land() == '#')
 				{
 					for (int a = 0; a < amount; a++) {
-						terrain[i][j]->addAnimal(new Salmon(i, j));
-						cout << "Salmon generated in tile " << i << "-" << j << endl;
-						total_animals++;
-						total_herbivores++;
-						salmons++;
+						int solomon = rand() % 2;
+						if (solomon == 1)
+						{
+							terrain[i][j]->addAnimal(new Salmon(i, j));
+							cout << "Salmon generated in tile " << i << "-" << j << endl;
+							total_animals++;
+							total_herbivores++;
+							salmons++;
+						}
 					}
 				}
 				else if (terrain[i][j]->get_land() == '^')
@@ -366,7 +374,7 @@ void Ecosystem::PlaceAnimals()
 				else
 				{    //Wolf, Fox
 					for (int a = 0; a < amount; a++) {
-						int anim = rand() % 4 + 1;
+						int anim = rand() % 5 + 1;
 						switch (anim) {
 						case 1:
 							terrain[i][j]->addAnimal(new Wolf(i, j));
@@ -384,6 +392,7 @@ void Ecosystem::PlaceAnimals()
 							break;
 						case 3:
 							terrain[i][j]->addAnimal(new Rabbit(i, j));
+							terrain[i][j]->addAnimal(new Rabbit(i, j));
 							cout << "Rabbit generated in tile " << i << "-" << j << endl;
 							total_animals++;
 							total_herbivores++;
@@ -391,12 +400,14 @@ void Ecosystem::PlaceAnimals()
 							break;
 						case 4:
 							terrain[i][j]->addAnimal(new Deer(i, j));
+							terrain[i][j]->addAnimal(new Deer(i, j));
 							cout << "Deer generated in tile " << i << "-" << j << endl;
 							total_animals++;
 							total_herbivores++;
 							deers++;
 							break;
 						case 5:
+							terrain[i][j]->addAnimal(new GroundHog(i, j));
 							terrain[i][j]->addAnimal(new GroundHog(i, j));
 							cout << "Groundhog generated in tile " << i << "-" << j << endl;
 							total_animals++;
@@ -409,11 +420,11 @@ void Ecosystem::PlaceAnimals()
 					}
 				}
 			}
-			int k = 1;
+			int k = 0;
 			Animal* animal;
 			while ((animal = terrain[i][j]->getAnimal(k)) != NULL)
 			{
-				while(!animal->isAdult()) animal->Raise();
+				while (!animal->isAdult()) animal->Raise();
 				k++;
 			}
 		}
@@ -433,12 +444,11 @@ void Ecosystem::RunEcosystem()
 			printSystem();
 			timesSeasonChanged++;
 		}
-		
+
 		AnimalMovement();
 
 		for (int i = 0; i < terrain_size; i++) {
 			for (int j = 0; j < terrain_size; j++) {
-				terrain[i][j]->AnimalMovement();
 				terrain[i][j]->AnimalEating();
 				terrain[i][j]->CheckDeadEntities();
 			}
@@ -450,6 +460,11 @@ void Ecosystem::RunEcosystem()
 		}
 		else
 		{
+			//for (int i = 0; i < terrain_size; i++) {
+			//	for (int j = 0; j < terrain_size; j++) {
+			//		terrain[i][j]->AnimalEating();
+			//	}
+			//}
 			EndDay();
 
 			if (dayOfYear >= simDuration) break; //sim is over
@@ -460,15 +475,15 @@ void Ecosystem::RunEcosystem()
 void Ecosystem::DailyReset()
 {
 	ResetHunger();
-	
-//	cout << "new day" << endl;
+
+	//	cout << "new day" << endl;
 
 
 	if (dayOfYear%animal_growthPeriod == 0)
 	{
 		for (int i = 0; i < terrain_size; i++) {
 			for (int j = 0; j < terrain_size; j++) {
-				int k = 1;
+				int k = 0;
 				Animal* animal;
 				while ((animal = terrain[i][j]->getAnimal(k)) != NULL)
 				{
@@ -490,7 +505,7 @@ void Ecosystem::DailyReset()
 		}
 	}
 	dayOfYear++;
-	cout <<"Day of year: "<< dayOfYear << endl;
+	cout << "Day of year: " << dayOfYear << endl;
 }
 
 void Ecosystem::ApplySeason()
@@ -536,7 +551,7 @@ void Ecosystem::ResetHunger()
 {
 	for (int i = 0; i < terrain_size; i++) {
 		for (int j = 0; j < terrain_size; j++) {
-			int k = 1;
+			int k = 0;
 			Animal* animal = terrain[i][j]->getAnimal(k);
 			while (animal != NULL)
 			{
@@ -554,7 +569,7 @@ void Ecosystem::PlantBreeding(int i, int j)
 		if (dayOfYear%plants_breedingRepPeriod == 0)
 		{
 			Plant* temP = terrain[i][j]->getPlant();
-			if (temP != NULL)
+			if (temP != NULL && !temP->isNewB())
 			{
 				srand(time(NULL));
 				int prob = rand() % 100 + 1;
@@ -564,16 +579,22 @@ void Ecosystem::PlantBreeding(int i, int j)
 					if (tempTile != NULL)
 					{
 						char token = temP->getToken();
-						if (token == 'G')
+						if (token == 'G' && (tempTile->get_land() == '\"')) {
 							tempTile->addPlant(new Grass(i, j));
-						else if ((token == 'A'))
+							tempTile->getPlant()->setNewB(true);
+						}
+						else if ((token == 'A') && (tempTile->get_land() == '#')) {
 							tempTile->addPlant(new Algae(i, j));
-						else if ((token == 'O'))
+						}
+						else if ((token == 'O') && (tempTile->get_land() == '\"')) {
 							tempTile->addPlant(new Oak(i, j));
-						else if ((token == 'P'))
+						}
+						else if ((token == 'P') && (tempTile->get_land() == '^')) {
 							tempTile->addPlant(new Pine(i, j));
-						else
+						}
+						else if ((token == 'M') && (tempTile->get_land() != '#')) {
 							tempTile->addPlant(new Maple(i, j));
+						}
 					}
 				}
 			}
@@ -582,11 +603,11 @@ void Ecosystem::PlantBreeding(int i, int j)
 
 void Ecosystem::AnimalBreeding(int i, int j)
 {
-	int k = 1;
+	int k = 0;
 	Animal* animal = terrain[i][j]->getAnimal(k);
 	while (animal != NULL)
 	{
-		if (animal->isAdult()) 
+		if (animal->isAdult() && !animal->isHiber())
 		{
 			if ((animal->getToken() == 'H') && (dayOfYear%herbivors_breedingRepPeriod == 0))
 			{	// new instance of same type gets created at same tile
@@ -632,7 +653,7 @@ void Ecosystem::GiveBirth(Animal * animal, int i, int j)
 	{
 		terrain[i][j]->addAnimal(new Deer(i, j));
 	}
-	else if (name == "GroundHog")
+	else if (name == "Groundhog")
 	{
 		terrain[i][j]->addAnimal(new GroundHog(i, j));
 	}
@@ -644,26 +665,26 @@ void Ecosystem::GiveBirth(Animal * animal, int i, int j)
 	{
 		terrain[i][j]->addAnimal(new Fox(i, j));
 	}
-	else
+	else if (name == "Rabbit")
 	{
 		terrain[i][j]->addAnimal(new Rabbit(i, j));
 	}
-	//cout << "animal created" << endl;
+	cout << "animal created" << endl;
 }
 
 Tile * Ecosystem::FindFreeTile(int &i, int &j)
 {
-	if ( ((j-1)>=0) && terrain[i][j - 1]->getPlant() == NULL)
+	if (((j - 1) >= 0) && terrain[i][j - 1]->getPlant() == NULL)
 	{
 		j--;
 		return (terrain[i][j]);
 	}
-	else if ( ((j+1)<=9) && terrain[i][j + 1]->getPlant() == NULL)
+	else if (((j + 1) <= 9) && terrain[i][j + 1]->getPlant() == NULL)
 	{
 		j++;
 		return (terrain[i][j]);
 	}
-	else if (((i+1)<=9) && terrain[i + 1][j]->getPlant() == NULL)
+	else if (((i + 1) <= 9) && terrain[i + 1][j]->getPlant() == NULL)
 	{
 		i++;
 		return (terrain[i][j]);
@@ -681,7 +702,7 @@ void Ecosystem::AnimalSleep()
 {
 	for (int i = 0; i < terrain_size; i++) {
 		for (int j = 0; j < terrain_size; j++) {
-			int k = 1;
+			int k = 0;
 			Animal* animal;
 			while ((animal = terrain[i][j]->getAnimal(k)) != NULL)
 			{
@@ -699,7 +720,7 @@ void Ecosystem::AnimalWake()
 {
 	for (int i = 0; i < terrain_size; i++) {
 		for (int j = 0; j < terrain_size; j++) {
-			int k = 1;
+			int k = 0;
 			Animal* animal;
 			while ((animal = terrain[i][j]->getAnimal(k)) != NULL)
 			{
@@ -715,7 +736,41 @@ void Ecosystem::AnimalWake()
 
 void Ecosystem::EndDay()
 {
-	int selection=0;
+	HANDLE hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
+
+	TotalsInit();
+	for (int i = 0; i < terrain_size; i++) {
+		for (int j = 0; j < terrain_size; j++) {
+			terrain[i][j]->CheckHunger();
+			terrain[i][j]->CheckDeadEntities();
+
+			AnimalBreeding(i, j);
+			PlantBreeding(i, j);
+			PlantCount(i, j);
+			AnimalCount(i, j);
+		}
+	}
+	for (int i = 0; i < terrain_size; i++) {
+		for (int j = 0; j < terrain_size; j++) {
+			if (terrain[i][j]->getPlant() != NULL) {
+				terrain[i][j]->getPlant()->setNewB(false);
+			}
+		}
+	}
+	int selection = 0;
+
+	if (total_animals == 1) 
+	{ 
+		SetConsoleTextAttribute(hConsole, 14);
+		if (bears == 1)
+		{
+			cout << "1 bear is still alive." << endl;
+		}
+		cout << "WINNER WINNER CHICKEN DINNNER!" << endl;
+		SetConsoleTextAttribute(hConsole, 7);
+		dayOfYear = simDuration + 1;
+		return;
+	}
 	while (selection != 1) {
 		do {
 			cout << endl;
@@ -724,6 +779,7 @@ void Ecosystem::EndDay()
 			cout << "2. Print System" << endl;
 			cout << "3. Print plant statistics" << endl;
 			cout << "4. Print animal statistics" << endl;
+			cout << "5. Tile analytics" << endl;
 			cin >> selection;
 		} while (selection <= 0 || season >= 5);
 		switch (selection) {
@@ -738,21 +794,27 @@ void Ecosystem::EndDay()
 		case 4:
 			PrintAnimalStatistics();
 			break;
+		case 5:
+			int i, j;
+			cout << "Give coordinates\n";
+			do
+			{
+				cout << "x: ";
+				cin >> i;
+			} while (i >= terrain_size);
+			do
+			{
+				cout << "y: ";
+				cin >> j;
+			} while (j >= terrain_size);
+			TileAnalytics(i, j);
 		default:
 			break;
 		}
 	}
 	hourOfDay = 0;
-	for (int i = 0; i < terrain_size; i++) {
-		for (int j = 0; j < terrain_size; j++) {
-			terrain[i][j]->CheckHunger();
-			terrain[i][j]->CheckDeadEntities();
 
-			AnimalBreeding(i, j);
-			PlantBreeding(i, j);
-		}
-	}
-	
+
 	// apo ekfwnhsh:
 	// epipleon, ta fyta anaplhrwnoun energeia kai pi8anws megalwnoun opws anafer8hke se prohgoumenh enothta <- wtf is this?
 
@@ -765,7 +827,7 @@ void Ecosystem::AnimalMovement()
 	srand(time(NULL));
 	for (int i = 0; i < terrain_size; i++) {
 		for (int j = 0; j < terrain_size; j++) {
-			int k = 1;
+			int k = 0;
 			Animal* animal;
 			while ((animal = terrain[i][j]->getAnimal(k)) != NULL)
 			{
@@ -781,27 +843,38 @@ void Ecosystem::AnimalMovement()
 						{
 							speed = terrain_size - (i + 1);
 						}
-
-						type = terrain[i + speed][j]->get_land();
-						if (animal->Move(i + speed, j, type))
-						{
-							terrain[i][j]->removeAnimal(k);
-							terrain[i + speed][j]->addAnimal(animal);
-							animal->setMoved(true);
-							break;
-						}
+							int dy;
+							for (dy = 1; dy <= speed; dy++) {
+								type = terrain[i + dy][j]->get_land();
+								if (!animal->Move(i + dy, j, type))
+								{
+									break;
+								}
+							}
+							dy--;
+							if (dy) {
+								terrain[i][j]->removeAnimal(k);
+								terrain[i + dy][j]->addAnimal(animal);
+								animal->setMoved(true);
+								break;
+							}
 
 					case 2: // up
 						if (i - speed < 0)
 						{
 							speed = i;
 						}
-
-						type = terrain[i - speed][j]->get_land();
-						if (animal->Move(i - speed, j, type))
-						{
+						for (dy = 1; dy <= speed; dy++) {
+							type = terrain[i - dy][j]->get_land();
+							if (!animal->Move(i - dy, j, type))
+							{
+								break;
+							}
+						}
+						dy--;
+						if (dy) {
 							terrain[i][j]->removeAnimal(k);
-							terrain[i - speed][j]->addAnimal(animal);
+							terrain[i - dy][j]->addAnimal(animal);
 							animal->setMoved(true);
 							break;
 						}
@@ -811,12 +884,18 @@ void Ecosystem::AnimalMovement()
 						{
 							speed = j;
 						}
-
-						type = terrain[i][j - speed]->get_land();
-						if (animal->Move(i, j - speed, type))
-						{
+						int dx;
+						for (dx = 1; dx <= speed; dx++) {
+							type = terrain[i][j - dx]->get_land();
+							if (!animal->Move(i , j-dx, type))
+							{
+								break;
+							}
+						}
+						dx--;
+						if (dx) {
 							terrain[i][j]->removeAnimal(k);
-							terrain[i][j - speed]->addAnimal(animal);
+							terrain[i][j-dx]->addAnimal(animal);
 							animal->setMoved(true);
 							break;
 						}
@@ -825,12 +904,17 @@ void Ecosystem::AnimalMovement()
 						{
 							speed = terrain_size - (j + 1);
 						}
-
-						type = terrain[i][j + speed]->get_land();
-						if (animal->Move(i, j + speed, type))
-						{
+						for (dx = 1; dx <= speed; dx++) {
+							type = terrain[i][j + dx]->get_land();
+							if (!animal->Move(i, j + dx, type))
+							{
+								break;
+							}
+						}
+						dx--;
+						if (dx) {
 							terrain[i][j]->removeAnimal(k);
-							terrain[i][j + speed]->addAnimal(animal);
+							terrain[i][j + dx]->addAnimal(animal);
 							animal->setMoved(true);
 							break;
 						}
@@ -855,4 +939,143 @@ void Ecosystem::AnimalEating()
 			terrain[i][j]->AnimalEating();
 		}
 	}
+}
+
+void Ecosystem::PlantCount(int i, int j)
+{
+	if (terrain[i][j]->getPlant() != NULL)
+	{
+		total_plants++;
+		if (terrain[i][j]->getPlant()->getToken() == 'G')
+		{
+			grass++;
+			total_seedless++;
+		}
+		if (terrain[i][j]->getPlant()->getToken() == 'A')
+		{
+			algae++;
+			total_seedless++;
+		}
+		if (terrain[i][j]->getPlant()->getToken() == 'P')
+		{
+			Pines++;
+			total_seeded++;
+		}
+		if (terrain[i][j]->getPlant()->getToken() == 'O')
+		{
+			Oaks++;
+			total_seeded++;
+		}
+		if (terrain[i][j]->getPlant()->getToken() == 'M')
+		{
+			Maples++;
+			total_seeded++;
+		}
+	}
+}
+
+void Ecosystem::AnimalCount(int i, int j)
+{
+	int k = 0;
+	Animal* animal;
+	while ((animal = terrain[i][j]->getAnimal(k)) != NULL)
+	{
+		total_animals++;
+		string name = animal->getName();
+		if (name == "Deer") {
+			total_herbivores++;
+			deers++;
+		}
+		else if (name == "Rabbit") {
+			total_herbivores++;
+			rabbits++;
+		}
+		else if (name == "Groundhog") {
+			total_herbivores++;
+			groundhogs++;
+		}
+		else if (name == "Salmon") {
+			total_herbivores++;
+			salmons++;
+		}
+		else if (name == "Wolf") {
+			total_carnivores++;
+			wolves++;
+		}
+		else if (name == "Fox") {
+			total_carnivores++;
+			foxes++;
+		}
+		else if (name == "Bear") {
+			total_carnivores++;
+			bears++;
+		}
+		k++;
+	}
+}
+
+void Ecosystem::TotalsInit()
+{
+	total_plants = 0;
+	total_seeded = 0;
+	total_seedless = 0;
+	total_animals = 0;
+	total_carnivores = 0;
+	total_herbivores = 0;
+	grass = 0;
+	algae = 0;
+	Oaks = 0;
+	Pines = 0;
+	Maples = 0;
+	deers = 0;
+	rabbits = 0;
+	groundhogs = 0;
+	salmons = 0;
+	wolves = 0;
+	foxes = 0;
+	bears = 0;
+}
+
+
+void Ecosystem::TileAnalytics(int i, int j)
+{
+	cout << endl;
+	Plant* plant = terrain[i][j]->getPlant();
+	if (plant != NULL) {
+		cout << "\tTile " << i << "-" << j << endl << "---------------------" << endl;
+		cout << "Plant: " << plant->getName() << endl;
+		cout << "Life: " << plant->getLife() << endl;
+		if (plant->getToken() == 'O' || plant->getToken() == 'P' || plant->getToken() == 'M')
+		{
+			Seeded* temp = (Seeded *)plant;
+			cout << "Size: " << temp->getSize() << endl;
+			cout << "Seeds: " << temp->getSeeds() << endl;
+			cout << "Foliage: " << temp->getFoliage() << endl;
+		}
+	}
+	else {
+		cout << "No plant in this tile" << endl;
+	}
+	cout << endl;
+	int k = 0;
+	Animal * animal;
+	cout << "\tAnimals:" << endl << "-----------------------" << endl;
+	while ((animal = terrain[i][j]->getAnimal(k)) != NULL) {
+		cout << endl << "Name: " << animal->getName() << endl;
+		cout << "Hunger: " << animal->getHunger() << endl;
+		cout << "Size: " << animal->getSize() << endl;
+		cout << "Speed: " << animal->getSize() << endl;
+		if (animal->getToken() == 'H') {
+			Herbivor* temp = (Herbivor *)animal;
+			cout << "Needed Food: " << temp->getNeededFood() << endl;
+			cout << "Can Climb: " << temp->getClimb() << endl;
+		}
+		else {
+			Carnivore * temp = (Carnivore*)animal;
+			cout << "Attack: " << temp->getAttack() << endl;
+			cout << "Defence: " << temp->getDefence() << endl;
+		}
+		k++;
+	}
+
 }

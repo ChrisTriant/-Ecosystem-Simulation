@@ -4,12 +4,7 @@
 
 class Plant {
 private:
-	bool sick;	/* den exo brei pote prepei na ipologizo an to fito einai arrwsto.
-				 * Oute 3eroume gia poso tha einai arrwsto
-				 * Mallon den xreiazetai to sick (den uparxei sthn ekfwnhsh
-				 * apla leei oti mporei na mhn anaparax8ei logo pithanotiton illnessprob
-				 * opote mallon sto grow() xreiazetai apla na baloume ena if pou koita tis pithanothtes na einai arrwsto
-				 */
+	bool sick;	
 	std::string name;
 	int x, y;
 	char token;
@@ -17,7 +12,7 @@ private:
 	int illnessProb[4];
 	int life;
 	int lifeFactor;
-
+	bool newborn;
 public:
 	Plant(char, int, int, int, int);
 	void IncLife();
@@ -34,6 +29,8 @@ public:
 	virtual void grow(int);
 	int getIllnessProb(int);
 	int getBreedingProb(int);
+	bool isNewB();
+	void setNewB(bool);
 };
 
 
@@ -68,6 +65,8 @@ public:
 	int getSize();
 	void LoseSeed();
 	void LoseFoliage();
+	int getFoliage();
+	int getSeeds();
 };
 
 class Oak :public Seeded {

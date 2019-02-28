@@ -23,8 +23,8 @@ public:
 	Animal(int s, int eC, int sp, std::string name, int x, int y, bool hib, char tok);
 	virtual bool Move(int, int, char);
 	void setXY(int, int);
-	virtual void Eat(Plant*);
-	virtual void Eat(Animal*);
+	virtual bool Eat(Plant*);
+	virtual bool Eat(Animal*);
 	virtual void Raise();
 	int getSize();
 	int getSpeed();
@@ -51,7 +51,7 @@ public:
 	int getX();
 	int getY();
 	bool hasMoved();
-	
+
 	void setMoved(bool);
 };
 
@@ -61,9 +61,9 @@ private:
 	int neededFood;
 public:
 	Herbivor(int s, int sp, int nf, bool cc, int eC, std::string name, int x, int y, bool hib);
-	virtual void Eat(Plant* plant);
+	virtual bool Eat(Plant* plant);
 	virtual bool Move(int, int, char);
-	void Eat(Animal* animal);
+	bool Eat(Animal* animal);
 	virtual void Raise();
 	bool getClimb();
 	int getNeededFood();
@@ -74,14 +74,14 @@ class Deer :public Herbivor {
 public:
 	Deer(int x, int y);
 	bool Move(int, int, char);
-	void Eat(Plant* plant);
+	bool Eat(Plant* plant);
 	void Raise();
 };
 
 class Rabbit :public Herbivor {
 public:
 	Rabbit(int x, int y);
-	void Eat(Plant* plant);
+	bool Eat(Plant* plant);
 	bool Move(int, int, char);
 	void Raise();
 };
@@ -90,7 +90,7 @@ class GroundHog :public Herbivor {
 public:
 	GroundHog(int x, int y);
 	bool Move(int, int, char);
-	void Eat(Plant* plant);
+	bool Eat(Plant* plant);
 	void Raise();
 };
 
@@ -99,7 +99,7 @@ private:
 	bool newborn;
 public:
 	Salmon(int x, int y);
-	void Eat(Plant* plant);
+	bool Eat(Plant* plant);
 	bool Move(int, int, char);
 	bool isNewB();
 	void setNewB(bool);
@@ -117,7 +117,7 @@ public:
 	int getDefence();
 	bool Move(int, int, char);
 	void incDefence();
-	virtual void Eat(Animal*);
+	virtual bool Eat(Animal*);
 	int getAttack();
 	void incAttack();
 	virtual void Raise();
@@ -127,7 +127,7 @@ class Fox :public Carnivore {
 
 public:
 	Fox(int x, int y);
-	void Eat(Animal*);
+	bool Eat(Animal*);
 	void Raise();
 };
 
@@ -135,7 +135,7 @@ class Wolf :public Carnivore {
 
 public:
 	Wolf(int x, int y);
-	void Eat(Animal*);
+	bool Eat(Animal*);
 	void Raise();
 };
 
@@ -143,7 +143,7 @@ class Bear :public Carnivore {
 
 public:
 	Bear(int x, int y);
-	void Eat(Animal*);
+	bool Eat(Animal*);
 	void Raise();
 };
 
