@@ -11,8 +11,10 @@ private:
 	int carnCount;
 	Plant* plant;
 public:
-	Tile(char c);
+	Tile();
+	~Tile();
 	char get_land();
+	void set_land(char l);
 	void addPlant(Plant* newplant);
 	Plant* getPlant();
 	void addAnimal(Animal* newanimal);

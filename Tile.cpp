@@ -1,14 +1,34 @@
 #include"Tile.h"
-
-Tile::Tile(char c)
+Tile::Tile()
 {
-	landscape = c;
 	animalCount = 0;
+	plant = NULL;
+}
+
+Tile::~Tile()
+{
+	if (plant != NULL) {
+		delete plant;
+	}
+
+	for (unsigned int i = 0; i < animalCount; i++) {
+		if (animals.at(i) != NULL ) {
+			Animal * tempAnimal = animals.at(i);
+			animals.erase(animals.begin() + i);
+			delete tempAnimal;
+			animalCount--;
+			i--;
+		}
+	}
 }
 
 char Tile::get_land()
 {
 	return landscape;
+}
+void Tile::set_land(char l)
+{
+	landscape = l;
 }
 void Tile::addPlant(Plant* newplant)
 {
@@ -44,10 +64,6 @@ void Tile::AnimalEating()
 	for (unsigned int i = 0; i < animalCount; i++) {
 		if (animals.at(i) != NULL && animals.at(i)->isalive() && !animals.at(i)->isHiber())
 		{
-			if (animals[i]->getName() == "Fox")
-			{
-				int x = 5;
-			}
 			if (animals[i]->getToken() == 'H' && plant != NULL)
 			{
 				animals[i]->Eat(plant);
@@ -55,8 +71,6 @@ void Tile::AnimalEating()
 			if (animals[i]->getToken() == 'C')
 			{
 				int j = 0;
-				//int j = i + 1;
-				//if (j >= animalCount) j = 0;
 				while (animals.at(j) != NULL && animals.at(j)->isalive())
 				{
  					if (j == i && ((++j) >= animalCount)) break;
@@ -101,7 +115,9 @@ void Tile::CheckDeadEntities()
 	for (unsigned int i = 0; i < animalCount; i++) {
 		if (animals.at(i) != NULL && !(animals.at(i)->isalive())) {
 			std::cout << animals.at(i)->getName() << " is dead" << std::endl;
+			Animal * tempAnimal = animals.at(i);
 			animals.erase(animals.begin() + i);
+			delete tempAnimal;
 			animalCount--;
 			i--;
 		}
@@ -128,7 +144,15 @@ void Tile::CheckHunger()
 			animal->incEatenFood(1);
 			return;
 		}
-		if (animal->getEatenFood() == 0)
+		if (animal->getToken() == 'H')
+		{
+			Herbivor * temp = (Herbivor*)animal;
+			if (animal->getEatenFood() != temp->getNeededFood())
+			{
+				animal->incHunger();
+			}
+		}
+		else if (animal->getEatenFood() == 0)
 		{
 			animal->incHunger();
 		}

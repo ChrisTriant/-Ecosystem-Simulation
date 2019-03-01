@@ -1,4 +1,6 @@
 #include"Plants.h"
+#include<ctime>
+#include<cstdlib>
 using namespace std;
 
 Plant::Plant(char t, int l, int lf, int x, int y) : token(t), life(l), lifeFactor(lf), x(x), y(y) {
@@ -40,6 +42,10 @@ Plant::Plant(char t, int l, int lf, int x, int y) : token(t), life(l), lifeFacto
 	}
 }
 
+Plant::~Plant()
+{
+}
+
 bool Plant::isAlive() {
 	return life != 0;
 }
@@ -54,10 +60,6 @@ bool Plant::isSick() {
 	return sick;
 }
 
-void Plant::operate()
-{
-
-}
 
 void Plant::grow(int season)
 {
@@ -136,26 +138,21 @@ Seedless::Seedless(char t, int s, int bp, int l, int lf, int x, int y) :Plant(t,
 
 }
 
-
-
-
-void Seedless::operate()
+Seedless::~Seedless()
 {
-	if (isSick())
-	{
-		LoseLife(getLifeFac());
-	}
-	else
-	{
-		IncLife();
-	}
 }
+
+
 
 /*##################################################*/
 /*###################SEEDED######################*/
 
 Seeded::Seeded(char t, int s, int bp, int l, int lf, int f, int sd, int sz, int x, int y) :Plant(t, l, lf, x, y), foliage(f), seeds(sd), size(sz) {
 
+}
+
+Seeded::~Seeded()
+{
 }
 
 void Seeded::LoseLife(int ehp)
@@ -176,13 +173,14 @@ void Seeded::LoseLife(int ehp)
 }
 
 
-void Seeded::operate()
+void Seeded::grow(int season)
 {
-	if (isSick())
+	srand(time(NULL));
+	int prob = rand() % 100 + 1;
+	if (prob <= getIllnessProb(season))
 	{
 		LoseLife(getLifeFac());
 		seeds -= (2 * getLifeFac());
-		// na doume afto me to foliage kai to lifeFactor
 	}
 	else
 	{
@@ -220,7 +218,15 @@ Grass::Grass(int x, int y) :Seedless('G', 15, 15, 5, 2, x, y)
 {
 }
 
+Grass::~Grass()
+{
+}
+
 Algae::Algae(int x, int y) : Seedless('A', 25, 25, 5, 2, x, y)
+{
+}
+
+Algae::~Algae()
 {
 }
 
@@ -230,9 +236,19 @@ Algae::Algae(int x, int y) : Seedless('A', 25, 25, 5, 2, x, y)
 Oak::Oak(int x, int y) : Seeded('O', 20, 20, 30, 15, 30, 15, 5, x, y)
 {
 }
+Oak::~Oak()
+{
+}
 Maple::Maple(int x, int y) : Seeded('M', 5, 5, 20, 10, 20, 10, 2, x, y)
 {
 }
+Maple::~Maple()
+{
+}
 Pine::Pine(int x, int y) : Seeded('P', 15, 15, 40, 20, 40, 20, 5, x, y)
+{
+}
+
+Pine::~Pine()
 {
 }

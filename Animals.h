@@ -21,6 +21,7 @@ private:
 	bool inHibernation;
 public:
 	Animal(int s, int eC, int sp, std::string name, int x, int y, bool hib, char tok);
+	~Animal();
 	virtual bool Move(int, int, char);
 	void setXY(int, int);
 	virtual bool Eat(Plant*);
@@ -61,6 +62,7 @@ private:
 	int neededFood;
 public:
 	Herbivor(int s, int sp, int nf, bool cc, int eC, std::string name, int x, int y, bool hib);
+	~Herbivor();
 	virtual bool Eat(Plant* plant);
 	virtual bool Move(int, int, char);
 	bool Eat(Animal* animal);
@@ -73,6 +75,7 @@ public:
 class Deer :public Herbivor {
 public:
 	Deer(int x, int y);
+	~Deer();
 	bool Move(int, int, char);
 	bool Eat(Plant* plant);
 	void Raise();
@@ -81,6 +84,7 @@ public:
 class Rabbit :public Herbivor {
 public:
 	Rabbit(int x, int y);
+	~Rabbit();
 	bool Eat(Plant* plant);
 	bool Move(int, int, char);
 	void Raise();
@@ -89,6 +93,7 @@ public:
 class GroundHog :public Herbivor {
 public:
 	GroundHog(int x, int y);
+	~GroundHog();
 	bool Move(int, int, char);
 	bool Eat(Plant* plant);
 	void Raise();
@@ -99,6 +104,7 @@ private:
 	bool newborn;
 public:
 	Salmon(int x, int y);
+	~Salmon();
 	bool Eat(Plant* plant);
 	bool Move(int, int, char);
 	bool isNewB();
@@ -114,6 +120,7 @@ protected:
 
 public:
 	Carnivore(int s, int eC, int sp, int a, int d, std::string n, int x, int y, bool hib);
+	~Carnivore();
 	int getDefence();
 	bool Move(int, int, char);
 	void incDefence();
@@ -127,6 +134,7 @@ class Fox :public Carnivore {
 
 public:
 	Fox(int x, int y);
+	~Fox();
 	bool Eat(Animal*);
 	void Raise();
 };
@@ -135,6 +143,7 @@ class Wolf :public Carnivore {
 
 public:
 	Wolf(int x, int y);
+	~Wolf();
 	bool Eat(Animal*);
 	void Raise();
 };
@@ -143,6 +152,7 @@ class Bear :public Carnivore {
 
 public:
 	Bear(int x, int y);
+	~Bear();
 	bool Eat(Animal*);
 	void Raise();
 };

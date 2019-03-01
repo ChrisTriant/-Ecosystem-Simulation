@@ -1,10 +1,9 @@
 #include<iostream>
-#include<ctime>
 #include<cstring>
 
 class Plant {
 private:
-	bool sick;	
+	bool sick;
 	std::string name;
 	int x, y;
 	char token;
@@ -15,6 +14,7 @@ private:
 	bool newborn;
 public:
 	Plant(char, int, int, int, int);
+	~Plant();
 	void IncLife();
 	virtual void LoseLife(int elf);
 	void LoseLife();
@@ -25,7 +25,6 @@ public:
 	int getLifeFac();
 	char getToken();
 	std::string getName();
-	virtual void operate();
 	virtual void grow(int);
 	int getIllnessProb(int);
 	int getBreedingProb(int);
@@ -40,17 +39,19 @@ private:
 
 public:
 	Seedless(char, int, int, int, int, int, int);
-	void operate();
+	~Seedless();
 };
 
 class Grass : public Seedless {
 public:
 	Grass(int x, int y);
+	~Grass();
 };
 
 class Algae : public Seedless {
 public:
 	Algae(int x, int y);
+	~Algae();
 };
 
 class Seeded :public Plant {
@@ -60,8 +61,9 @@ private:
 	int size;
 public:
 	Seeded(char, int, int, int, int, int, int, int, int, int);
+	~Seeded();
 	void LoseLife(int ehp);
-	void operate();
+	void grow(int);
 	int getSize();
 	void LoseSeed();
 	void LoseFoliage();
@@ -73,14 +75,17 @@ class Oak :public Seeded {
 
 public:
 	Oak(int x, int y);
+	~Oak();
 };
 
 class Pine :public Seeded {
 public:
 	Pine(int x, int y);
+	~Pine();
 };
 
 class Maple :public Seeded {
 public:
 	Maple(int x, int y);
+	~Maple();
 };

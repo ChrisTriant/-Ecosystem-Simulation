@@ -2,9 +2,9 @@
 #include"Ecosystem.h"
 using namespace std;
 int main(void) {
-	int terrain_size;
-	int season;
-	int simDuration;
+	int terrain_size=0;
+	int season=0;
+	int simDuration=0;
 	// sim starts at day one of selected season
 	do {
 		cout << "Enter terrain_size (At least 10)" << endl;
@@ -25,6 +25,5 @@ int main(void) {
 	Ecosystem eco(terrain_size, season, simDuration);
 	eco.RunEcosystem();
 	cout << endl;
-	system("pause");
 	return 0;
 }

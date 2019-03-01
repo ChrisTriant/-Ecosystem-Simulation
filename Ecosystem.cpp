@@ -1,47 +1,51 @@
 #include"Ecosystem.h"
 #include<ctime>
-#include<Windows.h>
+#include<cstdlib>
+
+#define RST  "\x1B[0m"
+#define KRED  "\x1B[31m"
+#define KGRN  "\x1B[32m"
+#define KYEL  "\x1B[33m"
+#define KBLU  "\x1B[34m"
+#define KMAG  "\x1B[35m"
+#define KCYN  "\x1B[36m"
+#define KWHT  "\x1B[37m"
+
+#define FRED(x) KRED x RST
+#define FGRN(x) KGRN x RST
+#define FYEL(x) KYEL x RST
+#define FBLU(x) KBLU x RST
+#define FMAG(x) KMAG x RST
+#define FCYN(x) KCYN x RST
+#define FWHT(x) KWHT x RST
+
+#define BOLD(x) "\x1B[1m" x RST
+#define UNDL(x) "\x1B[4m" x RST
+
 using namespace std;
 
 
-Ecosystem::Ecosystem(int t, int s, int sd) :terrain_size(t), season(s), simDuration(sd) {
-	terrain = new Tile**[terrain_size];
-	waterT = 0;
-	hillT = 0;
-	valleyT = 0;
-	total_plants = 0;
-	total_animals = 0;
-	total_carnivores = 0;
-	total_herbivores = 0;
-	grass = 0;
-	algae = 0;
-	Oaks = 0;
-	Pines = 0;
-	Maples = 0;
-	deers = 0;
-	rabbits = 0;
-	groundhogs = 0;
-	salmons = 0;
-	wolves = 0;
-	foxes = 0;
-	bears = 0;
+Ecosystem::Ecosystem(int t, int s, int sd) :terrain_size(t), season(s), simDuration(sd),hill_number(2) {
+	TotalsInit();
 	hourOfDay = 0;
 	dayOfYear = 1;
 	timesSeasonChanged = 1;
 
+	terrain = new Tile**[terrain_size];
+
 	for (int i = 0; i < terrain_size; i++) {
-		terrain[i] = new Tile*[terrain_size - 1];
+		terrain[i] = new Tile*[terrain_size];
 	}
 	for (int i = 0; i < terrain_size; i++) {
 		for (int j = 0; j < terrain_size; j++) {
-			terrain[i][j] = NULL;
+			terrain[i][j] = new Tile();
+			terrain[i][j]->set_land('-');
 		}
 	}
 	GenerateRiver();
 	GenerateLake();
 	GenerateHills();
 	GenerateMeadow();
-	CountElements();
 	PlacePlants();
 	cout << endl;
 	PlaceAnimals();
@@ -51,8 +55,18 @@ Ecosystem::Ecosystem(int t, int s, int sd) :terrain_size(t), season(s), simDurat
 	ApplySeason();
 }
 
+Ecosystem::~Ecosystem()
+{
+	for (int i = 0; i <terrain_size ; i++) {
+		for (int j =0; j <terrain_size; j++) {
+			delete terrain[i][j];
+		}
+		delete[] terrain[i];
+	}
+	delete[] terrain;
+}
+
 void Ecosystem::printSystem() {
-	HANDLE hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
 	cout << "Day of year: " << dayOfYear << endl << endl;
 	for (int i = 0; i < terrain_size; i++) {
 		for (int s = 0; s < terrain_size; s++) {
@@ -60,42 +74,34 @@ void Ecosystem::printSystem() {
 		}
 		cout << endl;
 		for (int j = 0; j < terrain_size; j++) {
-			if (terrain[i][j] != NULL) {
 				cout << "| ";
 				if (terrain[i][j]->get_land() == '#') {
-					SetConsoleTextAttribute(hConsole, 1);
 					if (terrain[i][j]->getPlant() != NULL) {
-						cout << terrain[i][j]->getPlant()->getToken();
+						cout<< KBLU << terrain[i][j]->getPlant()->getToken();
 					}
 					else {
-						cout << terrain[i][j]->get_land();
+						cout<< KBLU << terrain[i][j]->get_land();
 					}
-					SetConsoleTextAttribute(hConsole, 7);
-					cout << " |";
+					cout<<KWHT << " |";
 				}
 				else if (terrain[i][j]->get_land() == '\"') {
-					SetConsoleTextAttribute(hConsole, 2);
 					if (terrain[i][j]->getPlant() != NULL) {
-						cout << terrain[i][j]->getPlant()->getToken();
+						cout <<KGRN<< terrain[i][j]->getPlant()->getToken();
 					}
 					else {
-						cout << terrain[i][j]->get_land();
+						cout <<KGRN<< terrain[i][j]->get_land();
 					}
-					SetConsoleTextAttribute(hConsole, 7);
-					cout << " |";
+					cout<<KWHT << " |";
 				}
 				else if (terrain[i][j]->get_land() == '^') {
-					SetConsoleTextAttribute(hConsole, 6);
 					if (terrain[i][j]->getPlant() != NULL) {
-						cout << terrain[i][j]->getPlant()->getToken();
+						cout<<KRED << terrain[i][j]->getPlant()->getToken();
 					}
 					else {
-						cout << terrain[i][j]->get_land();
+						cout<< KRED << terrain[i][j]->get_land();
 					}
-					SetConsoleTextAttribute(hConsole, 7);
-					cout << " |";
+					cout<< KWHT << " |";
 				}
-			}
 		}
 		cout << endl;
 	}
@@ -145,40 +151,40 @@ void Ecosystem::GenerateRiver() {
 	srand(time(NULL));
 	int r = rand() % (terrain_size - 9) + 5;
 	for (int i = 0; i < terrain_size; i++) {
-		terrain[i][r] = new Tile('#');
+		terrain[i][r] ->set_land('#');
 		int t = rand() % (10) + 1;
 		if (t < 4) {				//30% chance to move
 			t = rand() % 4 + 1;
 			switch (t) {
 			case 1:										//move once to the right
 				if (r + 1 < terrain_size) {
-					terrain[i][r + 1] = new Tile('#');
+					terrain[i][r + 1]->set_land('#');;
 					r++;
 				}
 				break;
 			case 2:										//move twice to the right
 				if (r + 1 < terrain_size) {
-					terrain[i][r + 1] = new Tile('#');
+					terrain[i][r + 1]->set_land('#');;
 					r++;
 				}
 				if (r + 1 < terrain_size) {
-					terrain[i][r + 1] = new Tile('#');
+					terrain[i][r + 1]->set_land('#');;
 					r++;
 				}
 				break;
 			case 3:											//move once to the left
 				if (r - 1 >= 0) {
-					terrain[i][r - 1] = new Tile('#');
+					terrain[i][r - 1]->set_land('#');;
 					r--;
 				}
 				break;
 			case 4:											//move twice to the left
 				if (r - 1 >= 0) {
-					terrain[i][r - 1] = new Tile('#');
+					terrain[i][r - 1]->set_land('#');;
 					r--;
 				}
 				if (r - 1 >= 0) {
-					terrain[i][r - 1] = new Tile('#');
+					terrain[i][r - 1]->set_land('#');;
 					r--;
 				}
 				break;
@@ -197,7 +203,7 @@ void Ecosystem::GenerateLake()
 	int y = rand() % (terrain_size - lakesize);
 	for (int i = x; i < x + lakesize; i++) {
 		for (int j = y; j < y + lakesize; j++) {
-			terrain[i][j] = new Tile('#');
+			terrain[i][j]->set_land('#');;
 		}
 	}
 }
@@ -211,7 +217,7 @@ void Ecosystem::GenerateHills()
 		int x = rand() % (terrain_size - hillsize);
 		int y = rand() % (terrain_size - hillsize);
 		int tries = 0;
-		while (terrain[x][y] != NULL && terrain[x + hillsize][y] != NULL && terrain[x + hillsize][y + hillsize] != NULL && terrain[x][y + hillsize] != NULL) {
+		while (terrain[x][y]->get_land() != '#' && terrain[x + hillsize][y]->get_land() != '#' && terrain[x + hillsize][y + hillsize]->get_land() != '#' && terrain[x][y + hillsize]->get_land() != '#') {
 			int x = rand() % (terrain_size - hillsize);
 			int y = rand() % (terrain_size - hillsize);
 			tries++;
@@ -219,8 +225,8 @@ void Ecosystem::GenerateHills()
 		}
 		for (int i = x; i < x + hillsize; i++) {
 			for (int j = y; j < y + hillsize; j++) {
-				if (terrain[i][j] == NULL)
-					terrain[i][j] = new Tile('^');
+				if (terrain[i][j]->get_land() != '#')
+					terrain[i][j]->set_land('^');
 			}
 		}
 	}
@@ -230,28 +236,14 @@ void Ecosystem::GenerateMeadow()
 {
 	for (int i = 0; i < terrain_size; i++) {
 		for (int j = 0; j < terrain_size; j++) {
-			if (terrain[i][j] == NULL) {
-				terrain[i][j] = new Tile('\"');
+			if (terrain[i][j]->get_land() != '#'&& terrain[i][j]->get_land() != '^') {
+				terrain[i][j]->set_land('\"');
 			}
 		}
 	}
 }
 
-void Ecosystem::CountElements() {
-	for (int i = 0; i < terrain_size; i++) {
-		for (int j = 0; j < terrain_size; j++) {
-			if (terrain[i][j]->get_land() == '#') {
-				waterT++;
-			}
-			else if (terrain[i][j]->get_land() == '^') {
-				hillT++;
-			}
-			else {
-				valleyT++;
-			}
-		}
-	}
-}
+
 
 void Ecosystem::PlacePlants()
 {
@@ -450,7 +442,6 @@ void Ecosystem::RunEcosystem()
 		for (int i = 0; i < terrain_size; i++) {
 			for (int j = 0; j < terrain_size; j++) {
 				terrain[i][j]->AnimalEating();
-				terrain[i][j]->CheckDeadEntities();
 			}
 		}
 
@@ -460,11 +451,6 @@ void Ecosystem::RunEcosystem()
 		}
 		else
 		{
-			//for (int i = 0; i < terrain_size; i++) {
-			//	for (int j = 0; j < terrain_size; j++) {
-			//		terrain[i][j]->AnimalEating();
-			//	}
-			//}
 			EndDay();
 
 			if (dayOfYear >= simDuration) break; //sim is over
@@ -736,7 +722,6 @@ void Ecosystem::AnimalWake()
 
 void Ecosystem::EndDay()
 {
-	HANDLE hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
 
 	TotalsInit();
 	for (int i = 0; i < terrain_size; i++) {
@@ -761,13 +746,11 @@ void Ecosystem::EndDay()
 
 	if (total_animals == 1) 
 	{ 
-		SetConsoleTextAttribute(hConsole, 14);
-		if (bears == 1)
+		if (total_animals==1)
 		{
-			cout << "1 bear is still alive." << endl;
+			cout<<KYEL << "1 animal is still alive." << endl;
 		}
-		cout << "WINNER WINNER CHICKEN DINNNER!" << endl;
-		SetConsoleTextAttribute(hConsole, 7);
+		cout<<KYEL << "WINNER WINNER CHICKEN DINNNER!" << endl;
 		dayOfYear = simDuration + 1;
 		return;
 	}
@@ -794,7 +777,7 @@ void Ecosystem::EndDay()
 		case 4:
 			PrintAnimalStatistics();
 			break;
-		case 5:
+		case 5:								//extra feature to get the detais of a tile
 			int i, j;
 			cout << "Give coordinates\n";
 			do
@@ -813,12 +796,6 @@ void Ecosystem::EndDay()
 		}
 	}
 	hourOfDay = 0;
-
-
-	// apo ekfwnhsh:
-	// epipleon, ta fyta anaplhrwnoun energeia kai pi8anws megalwnoun opws anafer8hke se prohgoumenh enothta <- wtf is this?
-
-
 	DailyReset();	//that comes every cycle -> after 24 hours
 }
 

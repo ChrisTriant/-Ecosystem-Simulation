@@ -6,6 +6,11 @@ Animal::Animal(int s, int eC, int sp, string name, int x, int y, bool hib, char 
 	eatenFood = 0;
 	hungerCount = 0;
 	Wake();
+	moved = false;
+}
+
+Animal::~Animal()
+{
 }
 
 bool Animal::Move(int, int, char)
@@ -172,6 +177,10 @@ Herbivor::Herbivor(int s, int sp, int nf, bool cc, int eC, string name, int x, i
 {
 }
 
+Herbivor::~Herbivor()
+{
+}
+
 bool Herbivor::Eat(Plant * plant)
 {
 	return true;
@@ -218,6 +227,10 @@ void Herbivor::incNeededFood()
 Deer::Deer(int x, int y) :Herbivor(2, 4, 4, false, 2, "Deer", x, y, false)
 {
 
+}
+
+Deer::~Deer()
+{
 }
 
 bool Deer::Move(int x, int y, char type)
@@ -292,6 +305,10 @@ void Deer::Raise()
 
 Rabbit::Rabbit(int x, int y) : Herbivor(1, 2, 2, false, 1, "Rabbit", x, y, false) {
 
+}
+
+Rabbit::~Rabbit()
+{
 }
 
 bool Rabbit::Eat(Plant * plant)
@@ -372,6 +389,10 @@ void Rabbit::Raise()
 /*#############GROUNDHOG##################*/
 
 GroundHog::GroundHog(int x, int y) :Herbivor(2, 3, 3, false, 1, "Groundhog", x, y, true)
+{
+}
+
+GroundHog::~GroundHog()
 {
 }
 
@@ -482,6 +503,10 @@ Salmon::Salmon(int x, int y) :Herbivor(1, 5, 1, false, 1, "Salmon", x, y, false)
 	becameAdult();
 }
 
+Salmon::~Salmon()
+{
+}
+
 bool Salmon::Eat(Plant * plant)
 {
 	if (plant == NULL || !(plant->isAlive())) {
@@ -545,6 +570,10 @@ Carnivore::Carnivore(int s, int eC, int sp, int a, int d, std::string n, int x, 
 
 }
 
+Carnivore::~Carnivore()
+{
+}
+
 bool Carnivore::Eat(Animal* animal)
 {
 	return false;
@@ -560,7 +589,7 @@ bool Carnivore::Move(int x, int y, char type)
 	if (isHiber()) {
 		return false;
 	}
-	//cout << "I fucking moved" << endl;
+	//cout << "I moved" << endl;
 	setXY(x, y);
 	return true;
 }
@@ -590,6 +619,10 @@ void Carnivore::Raise()
 
 Fox::Fox(int x, int y) : Carnivore(1, 2, 1, 1, 1, "Fox", x, y, false) {
 
+}
+
+Fox::~Fox()
+{
 }
 
 bool Fox::Eat(Animal* animal) {
@@ -686,6 +719,10 @@ Wolf::Wolf(int x, int y) : Carnivore(1, 2, 2, 2, 2, "Wolf", x, y, false) {
 
 }
 
+Wolf::~Wolf()
+{
+}
+
 
 bool Wolf::Eat(Animal* animal) {
 	if (getHunger() != 0)
@@ -780,6 +817,10 @@ Bear::Bear(int x, int y) : Carnivore(3, 5, 4, 6, 6, "Bear", x, y, true) {
 
 }
 
+Bear::~Bear()
+{
+}
+
 
 bool Bear::Eat(Animal* animal) {
 	if (isHiber()) {
@@ -799,26 +840,18 @@ bool Bear::Eat(Animal* animal) {
 		int ownSpeed = getSpeed();
 		int ownAttack = getAttack();
 
-		if (enemyToken == 'H')  // if is herbivor
+
+		if (ownSize == 10) // if bear adult -> eats enyone
 		{
-			if (animal->getName()=="Salmon")
-			{
-
-				animal->Die();
-				//		cout << "Bear is no longer hungry\n";
-				return true;
-			}
-			if ((ownSize >= enemySize) && (ownSpeed > enemySpeed))
-			{
-
-				animal->Die();
-		//		cout << "Bear is no longer hungry\n";
-				return true;
-			}
+			setHungerCount(0);
+			incEatenFood(1);
+			animal->Die();
+			// cout << "Bear is no longer hungry\n";
+			return true;
 		}
-		else
+		else if (enemyToken == 'H')  // if is herbivor
 		{
-			if (ownSize == 10) // if bear adult
+			if ((ownSize >= enemySize) && (ownSpeed > enemySpeed))
 			{
 				setHungerCount(0);
 				incEatenFood(1);
@@ -826,7 +859,10 @@ bool Bear::Eat(Animal* animal) {
 		//		cout << "Bear is no longer hungry\n";
 				return true;
 			}
-			else if (ownSize > enemySize)
+		}
+		else
+		{
+			if (ownSize > enemySize)
 			{
 				setHungerCount(0);
 				animal->Die();

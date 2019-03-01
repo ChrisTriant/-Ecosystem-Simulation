@@ -6,10 +6,7 @@ class Ecosystem {
 private:
 	Tile* **terrain;
 	int terrain_size;
-	const int hill_number = 2;
-	int waterT;
-	int hillT;
-	int valleyT;
+	const int hill_number;
 	int total_plants;
 	int total_seeded;
 	int total_seedless;
@@ -32,6 +29,7 @@ private:
 	int hourOfDay;
 public:
 	Ecosystem(int, int, int);
+	~Ecosystem();
 	void printSystem();
 	void PrintPlantStatistics();
 	void PrintAnimalStatistics();
@@ -39,7 +37,6 @@ public:
 	void GenerateLake();
 	void GenerateHills();
 	void GenerateMeadow();
-	void CountElements();
 	void PlacePlants();
 	void PlaceAnimals();
 	void RunEcosystem();
